@@ -6,6 +6,7 @@ import { Colors } from "../../constants/colors";
 
 //themed components
 import TView from "../../components/TView";
+import TLink from "../../components/TLink";
 
 export default function HomeScreen() {
     let colorScheme = useColorScheme();
@@ -13,6 +14,7 @@ export default function HomeScreen() {
   return (
     <TView style={{ flex: 1}}>
       <Text style={{ color: theme.text }}>Home Page</Text>
+      <TLink href="/login">Log in</TLink>
     </TView>
   );
 }

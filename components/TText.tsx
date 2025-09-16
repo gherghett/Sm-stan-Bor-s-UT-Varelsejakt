@@ -7,13 +7,13 @@ import {
 import React from "react";
 import { Colors } from "../constants/colors";
 
-type TTextProps = {
-  style?: StyleProp<TextStyle>;
-  children?: React.ReactNode;
-  // ...other props
-};
+// type TTextProps = {
+//   style?: StyleProp<TextStyle>;
+//   children?: React.ReactNode;
+//   // ...other props
+// };
 
-export default function TText({ style, children, ...props }: TTextProps) {
+export default function TText({ style, children, ...props }: React.ComponentProps<typeof Text>) {
   const colorScheme = useColorScheme();
   const theme = Colors[colorScheme ?? "light"];
   return (
