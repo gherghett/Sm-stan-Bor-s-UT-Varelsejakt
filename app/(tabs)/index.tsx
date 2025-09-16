@@ -4,12 +4,15 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import React from "react";
 import { Colors } from "../../constants/colors";
 
+//themed components
+import TView from "../../components/TView";
+
 export default function HomeScreen() {
     let colorScheme = useColorScheme();
     const theme = Colors[colorScheme ?? "light"];
   return (
-    <View style={{ flex: 1, backgroundColor: theme.background }}>
+    <TView style={{ flex: 1}}>
       <Text style={{ color: theme.text }}>Home Page</Text>
-    </View>
+    </TView>
   );
 }

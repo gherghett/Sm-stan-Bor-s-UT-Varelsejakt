@@ -1,26 +1,28 @@
-import { StyleSheet, Text, useColorScheme, View } from "react-native";
 import React from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Link } from "expo-router";
-import { Colors } from "../../constants/colors";
+import TView from "../../components/TView";
+import TText from "../../components/TText";
+import TLink from "../../components/TLink";
 
 export default function About() {
-  let colorScheme = useColorScheme();
-  const theme = Colors[colorScheme ?? "light"];
   return (
-    <View>
-      <Text>About</Text>
-      <Link
+    <TView style={{ flex: 1 }}>
+      <TText>About</TText>
+      <TLink
         style={{ borderBottomWidth: 1, marginVertical: 10 }}
+        onPress={() => {}}
         href="/contact"
       >
         Contact
-      </Link>
-      <Link style={{ borderBottomWidth: 1, marginVertical: 10 }} href="/">
+      </TLink>
+      <TLink
+        style={{ borderBottomWidth: 1, marginVertical: 10 }}
+        onPress={() => {}}
+        href="/"
+      >
         home
-      </Link>
-    </View>
+      </TLink>
+    </TView>
   );
 }
 
-const styles = StyleSheet.create({});
+// ...existing code...
