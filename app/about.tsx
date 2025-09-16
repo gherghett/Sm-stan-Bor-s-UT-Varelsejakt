@@ -5,12 +5,18 @@ import { Link } from "expo-router";
 
 export default function About() {
   return (
-      <View>
-        <Text>About</Text>
-        <Link style={{ borderBottomWidth: 1, marginVertical: 10 }} href="/">
-          Back home
-        </Link>
-      </View>
+    <View>
+      <Text>About</Text>
+      <Link
+        style={{ borderBottomWidth: 1, marginVertical: 10 }}
+        href="/contact"
+      >
+        Contact
+      </Link>
+      <Link style={{ borderBottomWidth: 1, marginVertical: 10 }} href="/">
+        home
+      </Link>
+    </View>
   );
 }
 
