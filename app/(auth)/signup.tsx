@@ -6,37 +6,31 @@ import TTextInput from "../../components/TTextInput";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-
-import { OAuthProvider } from "react-native-appwrite";
-import TLink from "../../components/TLink";
 import { useUser } from "../../hooks/use-users";
 
-const loginSchema = z.object({
+const signupSchema = z.object({
   email: z.email({ message: "Invalid email address" }),
-  password: z.string(),
+  password: z.string().min(8, { message: "Password must be at least 6 characters" }),
 });
 
-type LoginForm = z.infer<typeof loginSchema>;
+type SignupForm = z.infer<typeof signupSchema>;
 
-export default function Login() {
-  const {user, login} = useUser(); 
-
+export default function Signup() {
+  const {user, register} = useUser();
 
   const {
     control,
     handleSubmit,
     formState: { errors },
-    register,
     setValue,
-  } = useForm<LoginForm>({
-    resolver: zodResolver(loginSchema),
+  } = useForm<SignupForm>({
+    resolver: zodResolver(signupSchema),
     defaultValues: { email: "", password: "" },
   });
 
-  const onSubmit = async (data: LoginForm) => {
-    console.log(user);
+  const onSubmit = async (data: SignupForm) => {
     try {
-      await login(data.email, data.password);
+      await register(data.email, data.password);
       console.log("current user: ", user);
       // Handle success (e.g., navigate to login or home)
     } catch (error) {
@@ -44,11 +38,9 @@ export default function Login() {
     }
   };
 
-  //Potatis12345678 password
   return (
     <TView>
-      {user && <TText>You are logged in as {user.email}</TText>}
-      <TText style={styles.title}>Login</TText>
+      <TText style={styles.title}>Sign Up</TText>
       <TTextInput
         placeholder="Email"
         autoCapitalize="none"
@@ -69,25 +61,8 @@ export default function Login() {
         <TText style={styles.error}>{errors.password.message}</TText>
       )}
       <TText style={styles.button} onPress={handleSubmit(onSubmit)}>
-        Login
+        Sign Up
       </TText>
-
-      <TText>Dont have an account? <TLink href="/signup">register</TLink></TText>
-
-      {/* <TText
-            disabled bc does not work in expo
-        style={styles.button}
-        onPress={async () => {
-          try {
-            const result = await loginWithOAuth(OAuthProvider.Github);
-            console.log('GitHub OAuth login successful:', result);
-          } catch (error) {
-            console.log('GitHub OAuth login failed:', error);
-          }
-        }}
-      >
-        Login with GitHub
-      </TText> */}
     </TView>
   );
 }

@@ -27,4 +27,13 @@ export const account = new Account(client);
 
 export const avatars = new Avatars(client);
 
+export interface AppwriteUser {
+  $id: string;
+  email: string;
+  name?: string;
+  // Add other fields as needed
+  [key: string]: any;
+}
+
+//gherghetta@gmail.com Potatis12345678
 

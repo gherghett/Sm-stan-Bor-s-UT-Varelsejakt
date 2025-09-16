@@ -4,6 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Stack } from "expo-router";
 import { Colors } from "../constants/colors";
 import { StatusBar } from "expo-status-bar";
+import { UserProvider } from "../context/user-context";
 
 export default function RootLayout() {
   let colorScheme = useColorScheme();
@@ -11,7 +12,7 @@ export default function RootLayout() {
 
   return (
     // <SafeAreaView style={{ flex: 1 }}>
-    <>
+    <UserProvider>
     <StatusBar />
       <Stack
         screenOptions={{
@@ -23,7 +24,7 @@ export default function RootLayout() {
         <Stack.Screen name="(auth)" options={{ headerShown: false }} />
 
       </Stack>
-    </>
+    </UserProvider>
     // </SafeAreaView>
   );
 }
