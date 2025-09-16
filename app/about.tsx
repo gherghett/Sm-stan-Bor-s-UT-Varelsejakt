@@ -5,14 +5,12 @@ import { Link } from "expo-router";
 
 export default function About() {
   return (
-    <SafeAreaView style={{ flex: 1 }}>
       <View>
         <Text>About</Text>
         <Link style={{ borderBottomWidth: 1, marginVertical: 10 }} href="/">
           Back home
         </Link>
       </View>
-    </SafeAreaView>
   );
 }
 

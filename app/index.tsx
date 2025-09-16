@@ -5,11 +5,9 @@ import React from "react";
 
 export default function index() {
   return (
-    <SafeAreaView style={{ flex: 1 }}>
       <View>
         <Text>index</Text>
         <Link href="/about">About</Link>
       </View>
-    </SafeAreaView>
   );
 }
