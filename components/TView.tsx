@@ -2,12 +2,11 @@ import {
   StyleProp,
   StyleSheet,
   Text,
-  useColorScheme,
   View,
   ViewStyle,
 } from "react-native";
 import React from "react";
-import { Colors } from "../constants/colors";
+import { useTheme } from "../context/theme-context";
 
 type TViewProps = {
   style?: StyleProp<ViewStyle>;
@@ -15,8 +14,7 @@ type TViewProps = {
 };
 
 export default function TView({ style, children, ...props }: TViewProps) {
-  const colorScheme = useColorScheme();
-  const theme = Colors[colorScheme ?? "light"];
+  const { theme } = useTheme();
   return (
     <View style={[{ backgroundColor: theme.background }, style]} {...props}>
       {children}

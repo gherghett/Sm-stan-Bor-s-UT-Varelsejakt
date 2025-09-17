@@ -2,10 +2,9 @@ import {
   StyleProp,
   Text,
   TextStyle,
-  useColorScheme,
 } from "react-native";
 import React from "react";
-import { Colors } from "../constants/colors";
+import { useTheme } from "../context/theme-context";
 
 // type TTextProps = {
 //   style?: StyleProp<TextStyle>;
@@ -14,8 +13,7 @@ import { Colors } from "../constants/colors";
 // };
 
 export default function TText({ style, children, ...props }: React.ComponentProps<typeof Text>) {
-  const colorScheme = useColorScheme();
-  const theme = Colors[colorScheme ?? "light"];
+  const { theme } = useTheme();
   return (
     <Text style={[{ color: theme.text }, style]} {...props}>
       {children}

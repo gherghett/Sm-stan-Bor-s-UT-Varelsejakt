@@ -3,14 +3,12 @@ import {
   Text,
   TextInput,
   TextStyle,
-  useColorScheme,
 } from "react-native";
 import React from "react";
-import { Colors } from "../constants/colors";
+import { useTheme } from "../context/theme-context";
 
 export default function TText({ style, children, ...props }: React.ComponentProps<typeof TextInput>) {
-  const colorScheme = useColorScheme();
-  const theme = Colors[colorScheme ?? "light"];
+  const { theme } = useTheme();
   return (
     <TextInput
       style={[
