@@ -1,5 +1,5 @@
-import { StyleSheet } from "react-native";
-import React from "react";
+import { Button, StyleSheet, View } from "react-native";
+import React, { useEffect, useState } from "react";
 import TView from "../../components/TView";
 import TText from "../../components/TText";
 import TTextInput from "../../components/TTextInput";
@@ -10,7 +10,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { OAuthProvider } from "react-native-appwrite";
 import TLink from "../../components/TLink";
 import { useUser } from "../../hooks/use-users";
-import { useRouter } from "expo-router";
+import { useNavigation, useRouter } from "expo-router";
 
 const loginSchema = z.object({
   email: z.email({ message: "Invalid email address" }),
@@ -20,11 +20,26 @@ const loginSchema = z.object({
 type LoginForm = z.infer<typeof loginSchema>;
 
 export default function Login() {
-  const { user, login } = useUser();
+  const { user, login, authChecked, headingTo, setHeadingTo, logout } =
+    useUser();
   const router = useRouter();
-  if (user !== null) {
-    router.push("/loggedin");
-  }
+  const navigation = useNavigation();
+
+  const [backEndError, setBackEndError] = useState<string | null>(null);
+
+  useEffect(() => {
+    navigation.setOptions({ headerShown: true, title: "Log In" });
+  }, [navigation]);
+
+  //fowrads user if he successfully logged in if he was heading somehwhere
+  useEffect(() => {
+    if (user !== null && authChecked) {
+      if (headingTo !== null) {
+        router.push(headingTo);
+        setHeadingTo(null);
+      }
+    }
+  }, [user, authChecked]);
 
   const {
     control,
@@ -38,43 +53,53 @@ export default function Login() {
   });
 
   const onSubmit = async (data: LoginForm) => {
-    console.log(user);
+    setBackEndError(null);
     try {
       await login(data.email, data.password);
       console.log("current user: ", user);
       // Handle success (e.g., navigate to login or home)
     } catch (error) {
       // Handle error (e.g., show error message)
+      setBackEndError((error as Error).message);
     }
   };
 
   //Potatis12345678 password
   return (
     <TView>
-      {user && <TText>You are logged in as {user.email}</TText>}
-      <TText style={styles.title}>Login</TText>
-      <TTextInput
-        placeholder="Email"
-        autoCapitalize="none"
-        keyboardType="email-address"
-        onChangeText={(text) => setValue("email", text)}
-        style={styles.input}
-      />
-      {errors.email && (
-        <TText style={styles.error}>{errors.email.message}</TText>
+      {user && authChecked && <TText>You are logged in as {user.email}</TText>}
+      {!authChecked && <TText>Loading...</TText>}
+      {!!!user && authChecked && (
+        <View>
+          <TText style={styles.title}>Login</TText>
+          <TTextInput
+            placeholder="Email"
+            autoCapitalize="none"
+            keyboardType="email-address"
+            onChangeText={(text) => setValue("email", text)}
+            style={styles.input}
+          />
+          {errors.email && (
+            <TText style={styles.error}>{errors.email.message}</TText>
+          )}
+          <TTextInput
+            placeholder="Password"
+            secureTextEntry
+            onChangeText={(text) => setValue("password", text)}
+            style={styles.input}
+          />
+          {errors.password && (
+            <TText style={styles.error}>{errors.password.message}</TText>
+          )}
+          <TText style={styles.button} onPress={handleSubmit(onSubmit)}>
+            Login
+          </TText>
+        </View>
       )}
-      <TTextInput
-        placeholder="Password"
-        secureTextEntry
-        onChangeText={(text) => setValue("password", text)}
-        style={styles.input}
-      />
-      {errors.password && (
-        <TText style={styles.error}>{errors.password.message}</TText>
+      {backEndError && <TText style={styles.error}>{backEndError}</TText>}
+      {!!user && authChecked && (
+        <Button title="Log Out" onPress={() => logout()} />
       )}
-      <TText style={styles.button} onPress={handleSubmit(onSubmit)}>
-        Login
-      </TText>
 
       <TText>
         Dont have an account? <TLink href="/signup">register</TLink>

@@ -1,13 +1,18 @@
 import { Button, StyleSheet, Text, View } from "react-native";
-import React from "react";
+import React, { useEffect } from "react";
 import TView from "../../components/TView";
 import TTitle from "../../components/TTitle";
 import { useUser } from "../../hooks/use-users";
 import UserOnly from "../../components/auth/user-only";
+import { useNavigation } from "expo-router";
 
 export default function Loggedin() {
   const { user, logout } = useUser();
+  const navigation = useNavigation();
 
+  useEffect(() => {
+    navigation.setOptions({ headerShown: true, title:"Logged In" });
+  }, [navigation]);
   return (
     <UserOnly>
       <TView

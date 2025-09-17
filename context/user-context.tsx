@@ -8,6 +8,8 @@ interface UserContextType {
   register: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   authChecked: boolean;
+  headingTo: string | null;
+  setHeadingTo: (headingTo : string | null) => void;
 }
 
 export const UserContext = createContext<UserContextType>(
@@ -17,6 +19,7 @@ export const UserContext = createContext<UserContextType>(
 export function UserProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AppwriteUser | null>(null);
   const [authChecked, setAuthChecked] = useState(false);
+  const [headingTo, setHeadingTo] = useState<string | null>(null);
 
   async function getInitialUseValue() {
     try {
@@ -70,7 +73,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
   }
   return (
     <UserContext.Provider
-      value={{ user, login, register, logout, authChecked }}
+      value={{ user, login, register, logout, authChecked, headingTo, setHeadingTo}}
     >
       {children}
     </UserContext.Provider>
