@@ -10,6 +10,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { OAuthProvider } from "react-native-appwrite";
 import TLink from "../../components/TLink";
 import { useUser } from "../../hooks/use-users";
+import { useRouter } from "expo-router";
 
 const loginSchema = z.object({
   email: z.email({ message: "Invalid email address" }),
@@ -19,8 +20,11 @@ const loginSchema = z.object({
 type LoginForm = z.infer<typeof loginSchema>;
 
 export default function Login() {
-  const {user, login} = useUser(); 
-
+  const { user, login } = useUser();
+  const router = useRouter();
+  if (user !== null) {
+    router.push("/loggedin");
+  }
 
   const {
     control,
@@ -72,7 +76,9 @@ export default function Login() {
         Login
       </TText>
 
-      <TText>Dont have an account? <TLink href="/signup">register</TLink></TText>
+      <TText>
+        Dont have an account? <TLink href="/signup">register</TLink>
+      </TText>
 
       {/* <TText
             disabled bc does not work in expo

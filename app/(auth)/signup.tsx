@@ -1,5 +1,5 @@
 import { StyleSheet } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import TView from "../../components/TView";
 import TText from "../../components/TText";
 import TTextInput from "../../components/TTextInput";
@@ -7,16 +7,25 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useUser } from "../../hooks/use-users";
+import { useRouter } from "expo-router";
 
 const signupSchema = z.object({
   email: z.email({ message: "Invalid email address" }),
-  password: z.string().min(8, { message: "Password must be at least 6 characters" }),
+  password: z
+    .string()
+    .min(8, { message: "Password must be at least 6 characters" }),
 });
 
 type SignupForm = z.infer<typeof signupSchema>;
 
 export default function Signup() {
-  const {user, register} = useUser();
+  const { user, register } = useUser();
+  const router = useRouter();
+  console.log("current user: ", user);
+  if (user !== null) {
+    router.push("/loggedin");
+  }
+  const [backEndError, setBackEndError] = useState<string | null>(null);
 
   const {
     control,
@@ -29,12 +38,18 @@ export default function Signup() {
   });
 
   const onSubmit = async (data: SignupForm) => {
+    setBackEndError(null);
     try {
+      console.log("register");
       await register(data.email, data.password);
       console.log("current user: ", user);
       // Handle success (e.g., navigate to login or home)
     } catch (error) {
-      // Handle error (e.g., show error message)
+      console.log("error");
+
+      console.error("Signup error:", error);
+
+      setBackEndError((error as Error).message);
     }
   };
 
@@ -60,6 +75,7 @@ export default function Signup() {
       {errors.password && (
         <TText style={styles.error}>{errors.password.message}</TText>
       )}
+      {backEndError && <TText style={styles.error}>{backEndError}</TText>}
       <TText style={styles.button} onPress={handleSubmit(onSubmit)}>
         Sign Up
       </TText>
