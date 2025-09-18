@@ -11,9 +11,9 @@ import {
 } from "react-native";
 import {
   getCreaturesNearAsync,
-  AppwriteGetNearestResponseBody,
   getCreatureImage,
 } from "../../lib/appwrite";
+import { AppwriteGetNearestResponseBody } from "../../lib/appwrite-types";
 import { bearing2svenska } from "../../lib/bearings";
 
 interface FoundCreature {
