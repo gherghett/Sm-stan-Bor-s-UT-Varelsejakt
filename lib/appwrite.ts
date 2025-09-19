@@ -89,7 +89,10 @@ export async function getUserCreatureCatalog(
       functionId: GET_CATALOG_FN_ID,
     });
     const body = JSON.parse(result.responseBody);
-    const creatures = body.creatures;
+    const creatures = body.creatures.map((creature: any) => ({
+      ...creature,
+      imageUrl: storage.getFileDownloadURL(bucketId, `c-${creature.$id}-big`).toString()
+    }));
     return { status: "success", result: creatures as Creature[] };
   } catch (e) {
     console.log(e);
@@ -102,7 +105,7 @@ const storage = new Storage(client);
 const bucketId = "68cbb26a000c2134554d";
 // TODO: add non happy paths
 export function getCreatureImage(creatureId: string) {
-  const url = storage.getFileDownloadURL(bucketId, `c-${creatureId}-big`);
+  const url = storage.getFileDownloadURL(bucketId, `c-${creatureId}-big`).toString();
   console.log(url);
   return url;
 }
@@ -118,44 +121,5 @@ export interface Creature {
   $updatedAt: string; // ISO date string or human-readable date
   requires: string[]; // empty array if none
   clue: string | null; // nullable
+  imageUrl: string;
 }
-
-//-------------------- Database --------------------------
-// const tableDB = new TablesDB(client);
-// const DB_ID = "68cae52c0031c8b969a9";
-// const CREATURES_TABLE = "creatures";
-// // const CAPTURES_TABLE = "captures";
-// export async function getUserCreatureCatalog(
-//   user: AppwriteUser
-// ): Promise<Result<Creature[]>> {
-//   const userId = user.$id;
-//   try {
-//     const capturesResult = await tableDB.listRows({
-//       databaseId: DB_ID,
-//       tableId: CAPTURES_TABLE,
-//       queries: [Query.equal("user", userId)],
-//     });
-//     const capturedIds = capturesResult.rows.map((cap) => cap.creature);
-//     const creaturesResults = await tableDB.listRows({
-//       databaseId: DB_ID,
-//       tableId: CREATURES_TABLE,
-//     });
-//     const usersCreatures = creaturesResults.rows
-//       .filter((c) => capturedIds.some((capId) => c.$id == capId))
-//       .map((c) => ({
-//         $id: c.$id,
-//         name: c.name,
-//         lat: c.lat,
-//         long: c.long,
-//         requires: c.requires,
-//         clue: c.clue,
-//       })) as Creature[];
-//     return {
-//       status: "success",
-//       result: usersCreatures,
-//     };
-//   } catch (error) {
-//     console.log((error as Error).message);
-//     return { status: "fail" };
-//   }
-// }

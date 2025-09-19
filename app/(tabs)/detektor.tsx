@@ -20,6 +20,7 @@ import {
 } from "../../lib/appwrite-types";
 import { bearing2svenska, meter2RandUnit } from "../../lib/bearings";
 import * as Location from "expo-location";
+import { useCatalog } from "../../context/catalog-context";
 
 interface FoundCreature {
   id: string;
@@ -28,6 +29,7 @@ interface FoundCreature {
 }
 
 export default function Detector() {
+  const {reloadCatalog} = useCatalog();
   const [detectedCreature, setDetectedCreature] =
     useState<null | CreatureDetected>(null);
   const [distanceText, setDistanceText] = useState<null | string>(null);
@@ -107,18 +109,21 @@ export default function Detector() {
     if (!!!newLocation) return;
 
     // Real location
-    // const body = await getCreaturesNearAsync(
-    //   newLocation?.coords.latitude.toString(),
-    //   newLocation?.coords.longitude.toString()
-    // );
+    const body = await getCreaturesNearAsync(
+      newLocation?.coords.latitude.toString(),
+      newLocation?.coords.longitude.toString()
+    );
 
     // Spoof coordinates for testing:
     // const body = await getCreaturesNearAsync("57.69503997613099", "12.85280862926597"); // nothing found
     // const body = await getCreaturesNearAsync("57.71918385006534", "12.939521137065727"); // barkott detected
-    const body = await getCreaturesNearAsync(
-      "57.71870608939903",
-      "12.940899606667822"
-    ); // barkott norr
+    // const body = await getCreaturesNearAsync(
+    //   "57.71870608939903",
+    //   "12.940899606667822"
+    // ); // barkott norr
+    // const body = await getCreaturesNearAsync(
+      // "57.71937251543197", "12.94090546319178"
+    // ); // barkott
 
     // The result of getCreaturesNearAsync is a discriminated union:
     // 1. { ok: true, reading: null, found: null, detected: null }
@@ -146,9 +151,9 @@ export default function Detector() {
       setFoundCreature({
         id: body.found.id,
         name: body.found.name,
-        img: imageUrl.href,
+        img: imageUrl,
       });
-      console.log("Detector: image url", imageUrl.href);
+      console.log("Detector: image url", imageUrl);
       setDetectedCreature(null);
     }
   };
@@ -173,6 +178,13 @@ export default function Detector() {
       location.coords.longitude.toString(),
       foundCreature.id
     );
+
+    reloadCatalog();
+
+    setDetectedCreature(null);
+    setFoundCreature(null);
+
+    // here we could trigger some animation or something
 
     //johanna
     // const result  =await captureCreatureAsync(

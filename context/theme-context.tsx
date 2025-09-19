@@ -1,6 +1,7 @@
 import React, { createContext, useContext, ReactNode } from "react";
 import { useColorScheme } from "react-native";
 import { Colors } from "../constants/colors";
+import { useUser } from "../hooks/use-users";
 
 // Type for individual theme (light or dark)
 type Theme = typeof Colors.light;
@@ -25,6 +26,7 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
   const colorScheme = useColorScheme();
   const currentScheme = colorScheme ?? "light";
   const theme = Colors[currentScheme];
+  const {user} = useUser();
 
   const value: ThemeContextType = {
     theme,

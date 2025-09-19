@@ -1,12 +1,14 @@
+
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { getUserCreatureCatalog, Creature, AppwriteUser } from "../lib/appwrite";
 import type { Result } from "../lib/result";
+import { useUser } from "../hooks/use-users";
 
 interface CatalogContextValue {
   catalog: Creature[] | null;
   loading: boolean;
   error: string | null;
-  reloadCatalog: (user: AppwriteUser) => Promise<void>;
+  reloadCatalog: () => Promise<void>;
 }
 
 const CatalogContext = createContext<CatalogContextValue | undefined>(undefined);
@@ -20,11 +22,11 @@ export function useCatalog() {
 }
 
 interface CatalogProviderProps {
-  user: AppwriteUser | null;
   children: ReactNode;
 }
 
-export const CatalogProvider: React.FC<CatalogProviderProps> = ({ user, children }) => {
+function CatalogProvider({ children }: CatalogProviderProps) {
+  const { user, authChecked } = useUser();
   const [catalog, setCatalog] = useState<Creature[] | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -49,16 +51,21 @@ export const CatalogProvider: React.FC<CatalogProviderProps> = ({ user, children
   };
 
   useEffect(() => {
-    if (user) {
+    if (authChecked && user) {
       loadCatalog(user);
     } else {
       setCatalog(null);
     }
-  }, [user]);
+  }, [authChecked, user]);
 
   return (
-    <CatalogContext.Provider value={{ catalog, loading, error, reloadCatalog: loadCatalog }}>
+    <CatalogContext.Provider value={{ catalog, loading, error, reloadCatalog: () => user ? loadCatalog(user) : Promise.resolve() }}>
       {children}
     </CatalogContext.Provider>
   );
-};
+}
+
+// ...existing code...
+
+export { CatalogProvider };
+

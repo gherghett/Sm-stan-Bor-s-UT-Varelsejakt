@@ -38,7 +38,7 @@ export default function TabsLayout() {
           name="katalog"
           options={{
             title: "Katalog",
-            href: (catalog ? undefined : null),
+            href: catalog ? (catalog.length > 0 ? undefined : null) : null,
             tabBarBadge: "!", // e.g. number of creatures
             tabBarIcon: ({ color }) => (
               <Ionicons name="home-sharp" color={color} />
@@ -76,10 +76,9 @@ export default function TabsLayout() {
 
   return (
     <UserOnly>
-      <CatalogProvider user={user}>
+      <CatalogProvider>
         <TabsWithCatalog />
       </CatalogProvider>
     </UserOnly>
   );
-
 }
