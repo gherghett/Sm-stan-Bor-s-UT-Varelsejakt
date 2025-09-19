@@ -42,21 +42,38 @@ export default function Detector() {
 
   const updateCreatureInfo = async (lat: string, long: string) => {
     const body = await getCreaturesNearAsync(lat, long);
-    const dirSv = bearing2svenska(body.nearest.bearing_deg);
-    setDetection(dirSv);
+    // The result of getCreaturesNearAsync is a discriminated union:
+    // 1. { ok: true, reading: null, found: null, detected: null }
+    //    - No creature detected nearby
+    // 2. { ok: true, reading: "detected", found: null, detected: {...} }
+    //    - A creature is detected nearby, but not close enough to capture
+    // 3. { ok: true, reading: "found", found: {...}, detected: null }
+    //    - A creature is found and can be captured
+    // 4. { ok: false, ... } (optional error state)
 
-    if (body.nearest.distance_m < 300) {
-      const imageUrl = getCreatureImage(body.nearest.id);
+    if (body.reading == null) {
+      // No creature detected
+      console.log("Detector: nothing detected", body);
+      setDetection(null);
+      setActiveCreature(null);
+    } else if (body.reading == "detected") {
+      // Creature detected nearby
+      console.log("Detector: creature detected", body.detected);
+      const dirSv = bearing2svenska(body.detected.bearing_deg);
+      setDetection(dirSv);
+      setActiveCreature(null);
+    } else if (body.reading == "found") {
+      // Creature found and can be captured
+      console.log("Detector: creature found", body.found);
+      const imageUrl = getCreatureImage(body.found.id);
       setActiveCreature({
-        name: body.nearest.name,
+        name: body.found.name,
         img: imageUrl.href,
       });
-      console.log("img: ", imageUrl.href);
+      console.log("Detector: image url", imageUrl.href);
       setDetection(null);
     }
   };
-
-  //57.72, "lng": 12.94
 
   return (
     <TView style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
@@ -93,7 +110,17 @@ export default function Detector() {
         style={styles.button}
         onPress={async () => {
           startPulse();
-          await updateCreatureInfo("57.719376146193206", "12.940858281030701");
+          // barkott
+          // await updateCreatureInfo("57.719376146193206", "12.940858281030701");
+
+          // nothing found
+          // await updateCreatureInfo("57.69503997613099", "12.85280862926597");
+
+          // barkott detected
+          // await updateCreatureInfo("57.71918385006534", "12.939521137065727");
+
+          //barkott norr
+          await updateCreatureInfo("57.71870608939903", "12.940899606667822");
         }}
       >
         {!!!activeCreature && <TText style={styles.buttonText}>Detect</TText>}
