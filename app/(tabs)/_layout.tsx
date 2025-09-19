@@ -3,11 +3,18 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { useColorScheme } from "react-native";
 import { Colors } from "../../constants/colors";
 import UserOnly from "../../components/auth/user-only";
-export default function TabLayout() {
+import { useUser } from "../../hooks/use-users";
+import { CatalogProvider, useCatalog } from "../../context/catalog-context";
+
+export default function TabsLayout() {
   const colorScheme = useColorScheme();
   const theme = Colors[colorScheme ?? "light"];
-  return (
-    <UserOnly>
+  const { user } = useUser();
+
+  // Child component to access catalog context
+  function TabsWithCatalog() {
+    const { catalog } = useCatalog();
+    return (
       <Tabs
         screenOptions={{
           tabBarStyle: { backgroundColor: theme.background },
@@ -27,13 +34,32 @@ export default function TabLayout() {
             ),
           }}
         />
-        
+        <Tabs.Screen
+          name="katalog"
+          options={{
+            title: "Katalog",
+            href: (catalog ? undefined : null),
+            tabBarBadge: "!", // e.g. number of creatures
+            tabBarIcon: ({ color }) => (
+              <Ionicons name="home-sharp" color={color} />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="detektor"
+          options={{
+            title: "Detektor",
+            tabBarIcon: ({ color }) => (
+              <Ionicons name="speedometer" color={color} />
+            ),
+          }}
+        />
+        {/*//Debug tabs*/}
         <Tabs.Screen
           name="about"
           options={{
             href: null, //hides tab
             title: "About",
-            tabBarIcon: ({ color }) => <Ionicons name="book" color={color} />,
           }}
         />
         <Tabs.Screen
@@ -45,6 +71,15 @@ export default function TabLayout() {
           }}
         />
       </Tabs>
+    );
+  }
+
+  return (
+    <UserOnly>
+      <CatalogProvider user={user}>
+        <TabsWithCatalog />
+      </CatalogProvider>
     </UserOnly>
   );
+
 }

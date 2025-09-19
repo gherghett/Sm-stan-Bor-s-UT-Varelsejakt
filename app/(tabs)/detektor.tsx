@@ -14,8 +14,11 @@ import {
   getCreatureImage,
   captureCreatureAsync,
 } from "../../lib/appwrite";
-import { AppwriteGetNearestResponseBody } from "../../lib/appwrite-types";
-import { bearing2svenska } from "../../lib/bearings";
+import {
+  AppwriteGetNearestResponseBody,
+  CreatureDetected,
+} from "../../lib/appwrite-types";
+import { bearing2svenska, meter2RandUnit } from "../../lib/bearings";
 import * as Location from "expo-location";
 
 interface FoundCreature {
@@ -25,7 +28,18 @@ interface FoundCreature {
 }
 
 export default function Detector() {
-  const [detection, setDetection] = useState<null | string>("");
+  const [detectedCreature, setDetectedCreature] =
+    useState<null | CreatureDetected>(null);
+  const [distanceText, setDistanceText] = useState<null | string>(null);
+
+  useEffect(() => {
+    if (!!!detectedCreature) {
+      setDistanceText(null);
+      return;
+    }
+    setDistanceText(meter2RandUnit(detectedCreature.distance_m));
+  }, [detectedCreature]);
+
   const [foundCreature, setFoundCreature] = useState<null | FoundCreature>(
     null
   );
@@ -92,10 +106,20 @@ export default function Detector() {
     const newLocation = await getCurrentLocation();
     if (!!!newLocation) return;
 
+    // Real location
+    // const body = await getCreaturesNearAsync(
+    //   newLocation?.coords.latitude.toString(),
+    //   newLocation?.coords.longitude.toString()
+    // );
+
+    // Spoof coordinates for testing:
+    // const body = await getCreaturesNearAsync("57.69503997613099", "12.85280862926597"); // nothing found
+    // const body = await getCreaturesNearAsync("57.71918385006534", "12.939521137065727"); // barkott detected
     const body = await getCreaturesNearAsync(
-      newLocation?.coords.latitude.toString(),
-      newLocation?.coords.longitude.toString()
-    );
+      "57.71870608939903",
+      "12.940899606667822"
+    ); // barkott norr
+
     // The result of getCreaturesNearAsync is a discriminated union:
     // 1. { ok: true, reading: null, found: null, detected: null }
     //    - No creature detected nearby
@@ -108,13 +132,12 @@ export default function Detector() {
     if (body.reading == null) {
       // No creature detected
       console.log("Detector: nothing detected", body);
-      setDetection(null);
+      setDetectedCreature(null);
       setFoundCreature(null);
     } else if (body.reading == "detected") {
       // Creature detected nearby
       console.log("Detector: creature detected", body.detected);
-      const dirSv = bearing2svenska(body.detected.bearing_deg);
-      setDetection(dirSv);
+      setDetectedCreature(body.detected);
       setFoundCreature(null);
     } else if (body.reading == "found") {
       // Creature found and can be captured
@@ -126,7 +149,7 @@ export default function Detector() {
         img: imageUrl.href,
       });
       console.log("Detector: image url", imageUrl.href);
-      setDetection(null);
+      setDetectedCreature(null);
     }
   };
 
@@ -197,17 +220,7 @@ export default function Detector() {
           style={styles.button}
           onPress={async () => {
             startPulse();
-            // barkott
             await updateCreatureInfo();
-
-            // nothing found
-            // await updateCreatureInfo("57.69503997613099", "12.85280862926597");
-
-            // barkott detected
-            // await updateCreatureInfo("57.71918385006534", "12.939521137065727");
-
-            //barkott norr
-            // await updateCreatureInfo("57.71870608939903", "12.940899606667822");
           }}
         >
           <TText style={styles.buttonText}>Detect</TText>
@@ -225,7 +238,15 @@ export default function Detector() {
           <TText style={styles.buttonText}>Fånga!</TText>
         </TouchableOpacity>
       )}
-      <TText>{detection}</TText>
+      {detectedCreature && (
+        <>
+          <TText>
+            Detektar något i {bearing2svenska(detectedCreature.bearing_deg)}{" "}
+            riktning
+          </TText>
+          {distanceText && <TText>~ {distanceText} bort.</TText>}
+        </>
+      )}
     </TView>
   );
 }
