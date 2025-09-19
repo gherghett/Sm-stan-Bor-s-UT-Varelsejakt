@@ -9,7 +9,11 @@ import {
   StyleSheet,
   Image,
 } from "react-native";
-import { getCreaturesNearAsync, getCreatureImage } from "../../lib/appwrite";
+import {
+  getCreaturesNearAsync,
+  getCreatureImage,
+  captureCreatureAsync,
+} from "../../lib/appwrite";
 import { AppwriteGetNearestResponseBody } from "../../lib/appwrite-types";
 import { bearing2svenska } from "../../lib/bearings";
 
@@ -23,6 +27,7 @@ export default function Detector() {
   const [activeCreature, setActiveCreature] = useState<null | FoundCreature>(
     null
   );
+  // const [userPos, setUserPos] = useState()
 
   //---Animation
   const pulseAnim = useRef(new Animated.Value(0)).current;
@@ -75,6 +80,27 @@ export default function Detector() {
     }
   };
 
+  const capture = async () => {
+    if (!!!activeCreature) {
+      return;
+    }
+    console.log("capture");
+    //barkott
+    const result = await captureCreatureAsync(
+      "51.719376146193206",
+      "12.940858281030701",
+      "68cc1d1f00038c5a257c"
+    );
+
+    //johanna
+    // const result  =await captureCreatureAsync(
+    //   "57.719024329519236",
+    //   "12.94245401320513",
+    //   "68caead000316c7b2bae"
+    // );
+    console.log(result);
+  };
+
   return (
     <TView style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
       {!!activeCreature && <TText>Du har hittat {activeCreature.name}!</TText>}
@@ -106,27 +132,39 @@ export default function Detector() {
           ]}
         />
       </View>
-      <TouchableOpacity
-        style={styles.button}
-        onPress={async () => {
-          startPulse();
-          // barkott
-          // await updateCreatureInfo("57.719376146193206", "12.940858281030701");
+      {!!!activeCreature && (
+        <TouchableOpacity
+          style={styles.button}
+          onPress={async () => {
+            startPulse();
+            // barkott
+            await updateCreatureInfo("57.719376146193206", "12.940858281030701");
 
-          // nothing found
-          // await updateCreatureInfo("57.69503997613099", "12.85280862926597");
+            // nothing found
+            // await updateCreatureInfo("57.69503997613099", "12.85280862926597");
 
-          // barkott detected
-          // await updateCreatureInfo("57.71918385006534", "12.939521137065727");
+            // barkott detected
+            // await updateCreatureInfo("57.71918385006534", "12.939521137065727");
 
-          //barkott norr
-          await updateCreatureInfo("57.71870608939903", "12.940899606667822");
-        }}
-      >
-        {!!!activeCreature && <TText style={styles.buttonText}>Detect</TText>}
-        {!!activeCreature && <TText style={styles.buttonText}>Fånga!</TText>}
-      </TouchableOpacity>
+            //barkott norr
+            // await updateCreatureInfo("57.71870608939903", "12.940899606667822");
+          }}
+        >
+          <TText style={styles.buttonText}>Detect</TText>
+        </TouchableOpacity>
+      )}
 
+      {!!activeCreature && (
+        <TouchableOpacity
+          style={styles.button}
+          onPress={async () => {
+            console.log("fånga pressed")
+            await capture();
+          }}
+        >
+          <TText style={styles.buttonText}>Fånga!</TText>
+        </TouchableOpacity>
+      )}
       <TText>{detection}</TText>
     </TView>
   );

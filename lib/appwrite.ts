@@ -1,4 +1,3 @@
-
 //------------------- Imports -------------------
 import { StatusBar } from "expo-status-bar";
 import {
@@ -11,15 +10,17 @@ import {
 import {
   Client,
   Functions,
-  Storage, 
+  Storage,
   Account,
   Avatars,
   ID,
   Models,
 } from "react-native-appwrite";
 import React, { useState } from "react";
-import { AppwriteFunctionResult, AppwriteGetNearestResponseBody } from "./appwrite-types";
-
+import {
+  AppwriteFunctionResult,
+  AppwriteGetNearestResponseBody,
+} from "./appwrite-types";
 
 //------------------- Appwrite Client Setup -------------------
 export const client = new Client()
@@ -55,6 +56,25 @@ export async function getCreaturesNearAsync(
     functionId: GET_NEAR_CREATURES_FN_ID,
     body: `{ "lat": ${userLat}, "lng": ${userLong}, "radius": 200 }`,
   });
+  return JSON.parse(result.responseBody);
+}
+
+const CAPTURE_CREATURE_FN_ID = "68cd0b6b001201e469e0";
+export async function captureCreatureAsync(
+  userLat: string,
+  userLong: string,
+  creatureId: string
+) {
+  console.log("in fånga fucntion")
+  const result = await functions.createExecution({
+    functionId: CAPTURE_CREATURE_FN_ID,
+    body: JSON.stringify({
+      lat: userLat,
+      lng: userLong,
+      creature_id: creatureId,
+    }),
+  });
+  console.log("end")
   return JSON.parse(result.responseBody);
 }
 
