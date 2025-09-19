@@ -1,7 +1,16 @@
 {
-    "workbench.colorCustomizations": {
-        "activityBar.background": "#3D2923",
-        "titleBar.activeBackground": "#553932",
-        "titleBar.activeForeground": "#FCFAF9"
-    }
+  // "workbench.colorCustomizations": {
+  //     "titleBar.border":"#0acc11",
+  //     "editor.background":"#311c31"
+  // },
+  "window.autoDetectColorScheme": false,
+  "workbench.colorTheme": "Kimbie Dark",
+  "workbench.colorCustomizations": {
+    "activityBar.background": "#cd4116",
+    "titleBar.activeBackground": "#651346",
+    "titleBar.activeForeground": "#FCFAF9",
+    "editor.lineHighlightBackground":"#160d01",
+    "editor.lineHighlightBorder":"#4d320f"
+    
+  }
 }

@@ -1,4 +1,4 @@
-import React, { act, useRef, useState } from "react";
+import React, { act, useEffect, useRef, useState } from "react";
 import TView from "../../components/TView";
 import TText from "../../components/TText";
 import TLink from "../../components/TLink";
@@ -16,18 +16,60 @@ import {
 } from "../../lib/appwrite";
 import { AppwriteGetNearestResponseBody } from "../../lib/appwrite-types";
 import { bearing2svenska } from "../../lib/bearings";
+import * as Location from "expo-location";
 
 interface FoundCreature {
+  id: string;
   name: string;
   img: string;
 }
 
 export default function Detector() {
   const [detection, setDetection] = useState<null | string>("");
-  const [activeCreature, setActiveCreature] = useState<null | FoundCreature>(
+  const [foundCreature, setFoundCreature] = useState<null | FoundCreature>(
     null
   );
-  // const [userPos, setUserPos] = useState()
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [location, setLocation] = useState<Location.LocationObject | null>(
+    null
+  );
+  const [permissionStatus, setPermissionStatus] =
+    useState<Location.PermissionStatus | null>(null);
+
+  // Location permission
+  useEffect(() => {
+    (async () => {
+      const status = await askForLocationPermission();
+      if (status !== "granted") {
+        setErrorMsg("Permission to access location was denied");
+        return;
+      }
+      await getCurrentLocation();
+    })();
+  }, []);
+
+  // ------ Location --------------------
+  async function askForLocationPermission() {
+    const { status } = await Location.requestForegroundPermissionsAsync();
+    setPermissionStatus(status);
+    return status;
+  }
+
+  async function getCurrentLocation() {
+    if (permissionStatus !== "granted") {
+      const status = await askForLocationPermission();
+      if (status !== "granted") {
+        setErrorMsg("Permission to access location was denied");
+        return;
+      }
+    }
+    let location = await Location.getCurrentPositionAsync({
+      accuracy: Location.Accuracy.Highest, // or Location.Accuracy.BestForNavigation
+    });
+    setLocation(location);
+    return location;
+  }
+  //--------------------
 
   //---Animation
   const pulseAnim = useRef(new Animated.Value(0)).current;
@@ -45,8 +87,15 @@ export default function Detector() {
   };
   //----
 
-  const updateCreatureInfo = async (lat: string, long: string) => {
-    const body = await getCreaturesNearAsync(lat, long);
+  // --- API communication /game logic
+  const updateCreatureInfo = async () => {
+    const newLocation = await getCurrentLocation();
+    if (!!!newLocation) return;
+
+    const body = await getCreaturesNearAsync(
+      newLocation?.coords.latitude.toString(),
+      newLocation?.coords.longitude.toString()
+    );
     // The result of getCreaturesNearAsync is a discriminated union:
     // 1. { ok: true, reading: null, found: null, detected: null }
     //    - No creature detected nearby
@@ -60,18 +109,19 @@ export default function Detector() {
       // No creature detected
       console.log("Detector: nothing detected", body);
       setDetection(null);
-      setActiveCreature(null);
+      setFoundCreature(null);
     } else if (body.reading == "detected") {
       // Creature detected nearby
       console.log("Detector: creature detected", body.detected);
       const dirSv = bearing2svenska(body.detected.bearing_deg);
       setDetection(dirSv);
-      setActiveCreature(null);
+      setFoundCreature(null);
     } else if (body.reading == "found") {
       // Creature found and can be captured
       console.log("Detector: creature found", body.found);
       const imageUrl = getCreatureImage(body.found.id);
-      setActiveCreature({
+      setFoundCreature({
+        id: body.found.id,
         name: body.found.name,
         img: imageUrl.href,
       });
@@ -81,15 +131,24 @@ export default function Detector() {
   };
 
   const capture = async () => {
-    if (!!!activeCreature) {
+    if (!!!foundCreature) {
+      return;
+    }
+    if (!!!location) {
       return;
     }
     console.log("capture");
     //barkott
+    // const result = await captureCreatureAsync(
+    //   "51.719376146193206",
+    //   "12.940858281030701",
+    //   "68cc1d1f00038c5a257c"
+    // );
+
     const result = await captureCreatureAsync(
-      "51.719376146193206",
-      "12.940858281030701",
-      "68cc1d1f00038c5a257c"
+      location.coords.latitude.toString(),
+      location.coords.longitude.toString(),
+      foundCreature.id
     );
 
     //johanna
@@ -100,17 +159,18 @@ export default function Detector() {
     // );
     console.log(result);
   };
+  // -------------
 
   return (
     <TView style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      {!!activeCreature && <TText>Du har hittat {activeCreature.name}!</TText>}
+      {!!foundCreature && <TText>Du har hittat {foundCreature.name}!</TText>}
       <TText style={{ fontSize: 30, marginBottom: 40 }}>Detector</TText>
 
       <View style={styles.circleContainer}>
-        {!!activeCreature && (
+        {!!foundCreature && (
           <Image
             resizeMode="cover"
-            source={{ uri: activeCreature.img }}
+            source={{ uri: foundCreature.img }}
             style={styles.imageCircle}
           />
         )}
@@ -132,13 +192,13 @@ export default function Detector() {
           ]}
         />
       </View>
-      {!!!activeCreature && (
+      {!!!foundCreature && (
         <TouchableOpacity
           style={styles.button}
           onPress={async () => {
             startPulse();
             // barkott
-            await updateCreatureInfo("57.719376146193206", "12.940858281030701");
+            await updateCreatureInfo();
 
             // nothing found
             // await updateCreatureInfo("57.69503997613099", "12.85280862926597");
@@ -154,11 +214,11 @@ export default function Detector() {
         </TouchableOpacity>
       )}
 
-      {!!activeCreature && (
+      {!!foundCreature && (
         <TouchableOpacity
           style={styles.button}
           onPress={async () => {
-            console.log("fånga pressed")
+            console.log("fånga pressed");
             await capture();
           }}
         >

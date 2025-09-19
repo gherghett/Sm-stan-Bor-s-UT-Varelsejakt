@@ -27,7 +27,8 @@
     "react-native-screens": "~4.16.0",
     "react-native-url-polyfill": "^2.0.0",
     "react-native-web": "^0.21.1",
-    "zod": "^4.1.8"
+    "zod": "^4.1.8",
+    "expo-location": "~19.0.7"
   },
   "devDependencies": {
     "@types/react": "~19.1.0",
