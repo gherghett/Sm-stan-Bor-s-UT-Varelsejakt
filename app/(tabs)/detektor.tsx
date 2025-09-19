@@ -9,10 +9,7 @@ import {
   StyleSheet,
   Image,
 } from "react-native";
-import {
-  getCreaturesNearAsync,
-  getCreatureImage,
-} from "../../lib/appwrite";
+import { getCreaturesNearAsync, getCreatureImage } from "../../lib/appwrite";
 import { AppwriteGetNearestResponseBody } from "../../lib/appwrite-types";
 import { bearing2svenska } from "../../lib/bearings";
 
@@ -67,14 +64,15 @@ export default function Detector() {
       <TText style={{ fontSize: 30, marginBottom: 40 }}>Detector</TText>
 
       <View style={styles.circleContainer}>
-        {/* Main circle */}
         {!!activeCreature && (
           <Image
+            resizeMode="cover"
             source={{ uri: activeCreature.img }}
             style={styles.imageCircle}
           />
         )}
 
+        {/* Main circle */}
         <View style={styles.mainCircle}></View>
 
         {/* Animated pulse circle */}
@@ -95,7 +93,7 @@ export default function Detector() {
         style={styles.button}
         onPress={async () => {
           startPulse();
-          await updateCreatureInfo("57.72", "12.94");
+          await updateCreatureInfo("57.719376146193206", "12.940858281030701");
         }}
       >
         {!!!activeCreature && <TText style={styles.buttonText}>Detect</TText>}
