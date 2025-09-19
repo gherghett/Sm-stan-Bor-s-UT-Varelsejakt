@@ -15,6 +15,8 @@ import {
   Avatars,
   ID,
   Models,
+  TablesDB,
+  Query,
 } from "react-native-appwrite";
 import React, { useState } from "react";
 import {
@@ -65,7 +67,7 @@ export async function captureCreatureAsync(
   userLong: string,
   creatureId: string
 ) {
-  console.log("in fånga fucntion")
+  console.log("in fånga fucntion");
   const result = await functions.createExecution({
     functionId: CAPTURE_CREATURE_FN_ID,
     body: JSON.stringify({
@@ -74,20 +76,86 @@ export async function captureCreatureAsync(
       creature_id: creatureId,
     }),
   });
-  console.log("end")
+  console.log("end");
   return JSON.parse(result.responseBody);
+}
+
+const GET_CATALOG_FN_ID = "68cd44ad0038458c10d6";
+export async function getUserCreatureCatalog(
+  user: AppwriteUser
+): Promise<Result<Creature[]>> {
+  try {
+    const result = await functions.createExecution({
+      functionId: GET_CATALOG_FN_ID,
+    });
+    const body = JSON.parse(result.responseBody);
+    const creatures = body.creatures;
+    return { status: "success", result: creatures as Creature[] };
+  } catch (e) {
+    console.log(e);
+    return { status: "fail" };
+  }
 }
 
 //------------------- Storage ----------------------------
 const storage = new Storage(client);
 const bucketId = "68cbb26a000c2134554d";
 // TODO: add non happy paths
-export function getCreatureImage(creatureId : string) {
-  const url = storage.getFileDownloadURL(
-      bucketId,
-      `c-${creatureId}-big`
-  );
+export function getCreatureImage(creatureId: string) {
+  const url = storage.getFileDownloadURL(bucketId, `c-${creatureId}-big`);
   console.log(url);
   return url;
 }
 
+import type { Result } from "./result";
+
+export interface Creature {
+  $id: string;
+  name: string;
+  lat: number;
+  long: number;
+  $createdAt: string; // ISO date string or human-readable date
+  $updatedAt: string; // ISO date string or human-readable date
+  requires: string[]; // empty array if none
+  clue: string | null; // nullable
+}
+
+//-------------------- Database --------------------------
+// const tableDB = new TablesDB(client);
+// const DB_ID = "68cae52c0031c8b969a9";
+// const CREATURES_TABLE = "creatures";
+// // const CAPTURES_TABLE = "captures";
+// export async function getUserCreatureCatalog(
+//   user: AppwriteUser
+// ): Promise<Result<Creature[]>> {
+//   const userId = user.$id;
+//   try {
+//     const capturesResult = await tableDB.listRows({
+//       databaseId: DB_ID,
+//       tableId: CAPTURES_TABLE,
+//       queries: [Query.equal("user", userId)],
+//     });
+//     const capturedIds = capturesResult.rows.map((cap) => cap.creature);
+//     const creaturesResults = await tableDB.listRows({
+//       databaseId: DB_ID,
+//       tableId: CREATURES_TABLE,
+//     });
+//     const usersCreatures = creaturesResults.rows
+//       .filter((c) => capturedIds.some((capId) => c.$id == capId))
+//       .map((c) => ({
+//         $id: c.$id,
+//         name: c.name,
+//         lat: c.lat,
+//         long: c.long,
+//         requires: c.requires,
+//         clue: c.clue,
+//       })) as Creature[];
+//     return {
+//       status: "success",
+//       result: usersCreatures,
+//     };
+//   } catch (error) {
+//     console.log((error as Error).message);
+//     return { status: "fail" };
+//   }
+// }

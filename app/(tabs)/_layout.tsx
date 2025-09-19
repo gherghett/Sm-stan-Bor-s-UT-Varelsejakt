@@ -27,10 +27,20 @@ export default function TabLayout() {
             ),
           }}
         />
+        
         <Tabs.Screen
           name="about"
           options={{
+            href: null, //hides tab
             title: "About",
+            tabBarIcon: ({ color }) => <Ionicons name="book" color={color} />,
+          }}
+        />
+        <Tabs.Screen
+          name="location"
+          options={{
+            href: null, //hides tab
+            title: "Location",
             tabBarIcon: ({ color }) => <Ionicons name="book" color={color} />,
           }}
         />
