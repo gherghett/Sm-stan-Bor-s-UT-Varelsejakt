@@ -170,11 +170,12 @@ export default function Detector() {
     //   "68cc1d1f00038c5a257c"
     // );
 
-    // const result = await captureCreatureAsync(
-    //   location.coords.latitude.toString(),
-    //   location.coords.longitude.toString(),
-    //   foundCreature.id
-    // );
+    captureCreatureAsync(
+      location.coords.latitude.toString(),
+      location.coords.longitude.toString(),
+      foundCreature.id
+    );
+    reloadCatalog();
 
     setDetectedCreature(null);
 
@@ -182,8 +183,7 @@ export default function Detector() {
     setFoundCreature(null);
     console.log("setting current encounter to ", fc);
     setCurrentEncounter({...fc});
-    reloadCatalog();
-    router.push("/(user-space)/encounter");
+    router.push("/(user-space)/encounter"); 
 
     // here we could trigger some animation or something
 

@@ -52,12 +52,6 @@ export default function TabsLayout() {
           ),
         }}
       />
-      <Tabs.Screen
-        name="encounter"
-        options={{
-          href: null,
-        }}
-      />
       {/*//Debug tabs*/}
       <Tabs.Screen
         name="about"

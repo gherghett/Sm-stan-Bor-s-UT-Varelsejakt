@@ -129,5 +129,6 @@ export interface Creature {
   $updatedAt: string; // ISO date string or human-readable date
   requires: string[]; // empty array if none
   clue: string | null; // nullable
+  encounter: string;
   imageUrl: string;
 }

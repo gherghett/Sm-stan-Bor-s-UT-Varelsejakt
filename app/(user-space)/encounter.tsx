@@ -23,11 +23,20 @@ interface Encounter {
 
 export default function encounter() {
   const { id = "default" } = useLocalSearchParams<{ id?: string }>();
-  const { currentEncounter } = useCatalog();
+  const { currentEncounter, catalog } = useCatalog();
   const router = useRouter();
-  const encounter: Encounter = JSON.parse(currentEncounter.encounter);
-  const content = encounter.content;
   const navigation = useNavigation();
+
+  // Determine encounter data based on the path
+  const encounterData = id !== "default" 
+    ? (() => {
+        const creature = catalog!.find((c) => c.$id == id);
+        return JSON.parse(creature!.encounter) as Encounter;
+      })()
+    : JSON.parse(currentEncounter.encounter) as Encounter;
+  
+  const encounter = encounterData;
+  const content = encounter.content;
 
   console.log("Encounter screen loaded with title:", encounter.title);
 
