@@ -22,9 +22,8 @@ export default function RootLayout() {
             headerTintColor: "#333",
           }}
         >
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="(user-space)" options={{ headerShown: false }} />
           <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-          
         </Stack>
       </UserProvider>
     </ThemeProvider>

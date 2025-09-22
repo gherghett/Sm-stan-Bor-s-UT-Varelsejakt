@@ -1,17 +1,31 @@
-
-import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
-import { getUserCreatureCatalog, Creature, AppwriteUser } from "../lib/appwrite";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
+import {
+  getUserCreatureCatalog,
+  Creature,
+  AppwriteUser,
+} from "../lib/appwrite";
 import type { Result } from "../lib/result";
 import { useUser } from "../hooks/use-users";
+import { CreatureFoundwImage } from "../app/(user-space)/(tabs)/detektor";
 
 interface CatalogContextValue {
   catalog: Creature[] | null;
   loading: boolean;
   error: string | null;
   reloadCatalog: () => Promise<void>;
+  currentEncounter: CreatureFoundwImage;
+  setCurrentEncounter: Function;
 }
 
-const CatalogContext = createContext<CatalogContextValue | undefined>(undefined);
+const CatalogContext = createContext<CatalogContextValue | undefined>(
+  undefined
+);
 
 export function useCatalog() {
   const ctx = useContext(CatalogContext);
@@ -30,6 +44,7 @@ function CatalogProvider({ children }: CatalogProviderProps) {
   const [catalog, setCatalog] = useState<Creature[] | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [currentEncounter, setCurrentEncounter] = useState<any>(null);
 
   const loadCatalog = async (u: AppwriteUser) => {
     setLoading(true);
@@ -59,7 +74,16 @@ function CatalogProvider({ children }: CatalogProviderProps) {
   }, [authChecked, user]);
 
   return (
-    <CatalogContext.Provider value={{ catalog, loading, error, reloadCatalog: () => user ? loadCatalog(user) : Promise.resolve() }}>
+    <CatalogContext.Provider
+      value={{
+        catalog,
+        loading,
+        error,
+        reloadCatalog: () => (user ? loadCatalog(user) : Promise.resolve()),
+        currentEncounter,
+        setCurrentEncounter,
+      }}
+    >
       {children}
     </CatalogContext.Provider>
   );
@@ -68,4 +92,3 @@ function CatalogProvider({ children }: CatalogProviderProps) {
 // ...existing code...
 
 export { CatalogProvider };
-

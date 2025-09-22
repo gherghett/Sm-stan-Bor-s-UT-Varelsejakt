@@ -1,7 +1,7 @@
 import React, { act, useEffect, useRef, useState } from "react";
-import TView from "../../components/TView";
-import TText from "../../components/TText";
-import TLink from "../../components/TLink";
+import TView from "../../../components/TView";
+import TText from "../../../components/TText";
+import TLink from "../../../components/TLink";
 import {
   View,
   Animated,
@@ -13,26 +13,27 @@ import {
   getCreaturesNearAsync,
   getCreatureImage,
   captureCreatureAsync,
-} from "../../lib/appwrite";
+} from "../../../lib/appwrite";
 import {
   AppwriteGetNearestResponseBody,
   CreatureDetected,
-} from "../../lib/appwrite-types";
-import { bearing2svenska, meter2RandUnit } from "../../lib/bearings";
+  CreatureFound,
+} from "../../../lib/appwrite-types";
+import { bearing2svenska, meter2RandUnit } from "../../../lib/bearings";
 import * as Location from "expo-location";
-import { useCatalog } from "../../context/catalog-context";
+import { useCatalog } from "../../../context/catalog-context";
+import { useRouter } from "expo-router";
 
-interface FoundCreature {
-  id: string;
-  name: string;
-  img: string;
+export interface CreatureFoundwImage extends CreatureFound {
+  img: string
 }
 
 export default function Detector() {
-  const {reloadCatalog} = useCatalog();
+  const { reloadCatalog, setCurrentEncounter } = useCatalog();
   const [detectedCreature, setDetectedCreature] =
     useState<null | CreatureDetected>(null);
   const [distanceText, setDistanceText] = useState<null | string>(null);
+  const router = useRouter();
 
   useEffect(() => {
     if (!!!detectedCreature) {
@@ -42,7 +43,7 @@ export default function Detector() {
     setDistanceText(meter2RandUnit(detectedCreature.distance_m));
   }, [detectedCreature]);
 
-  const [foundCreature, setFoundCreature] = useState<null | FoundCreature>(
+  const [foundCreature, setFoundCreature] = useState<null | CreatureFoundwImage>(
     null
   );
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -122,7 +123,7 @@ export default function Detector() {
     //   "12.940899606667822"
     // ); // barkott norr
     // const body = await getCreaturesNearAsync(
-      // "57.71937251543197", "12.94090546319178"
+    // "57.71937251543197", "12.94090546319178"
     // ); // barkott
 
     // The result of getCreaturesNearAsync is a discriminated union:
@@ -148,17 +149,13 @@ export default function Detector() {
       // Creature found and can be captured
       console.log("Detector: creature found", body.found);
       const imageUrl = getCreatureImage(body.found.id);
-      setFoundCreature({
-        id: body.found.id,
-        name: body.found.name,
-        img: imageUrl,
-      });
+      setFoundCreature({ ...body.found, img: imageUrl});
       console.log("Detector: image url", imageUrl);
       setDetectedCreature(null);
     }
   };
 
-  const capture = async () => {
+  const startEncounter = async () => {
     if (!!!foundCreature) {
       return;
     }
@@ -173,16 +170,20 @@ export default function Detector() {
     //   "68cc1d1f00038c5a257c"
     // );
 
-    const result = await captureCreatureAsync(
-      location.coords.latitude.toString(),
-      location.coords.longitude.toString(),
-      foundCreature.id
-    );
-
-    reloadCatalog();
+    // const result = await captureCreatureAsync(
+    //   location.coords.latitude.toString(),
+    //   location.coords.longitude.toString(),
+    //   foundCreature.id
+    // );
 
     setDetectedCreature(null);
+
+    const fc = foundCreature;
     setFoundCreature(null);
+    console.log("setting current encounter to ", fc);
+    setCurrentEncounter({...fc});
+    reloadCatalog();
+    router.push("/(user-space)/encounter");
 
     // here we could trigger some animation or something
 
@@ -192,13 +193,13 @@ export default function Detector() {
     //   "12.94245401320513",
     //   "68caead000316c7b2bae"
     // );
-    console.log(result);
+    // console.log(result);
   };
   // -------------
 
   return (
     <TView style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      {!!foundCreature && <TText>Du har hittat {foundCreature.name}!</TText>}
+      {!!foundCreature && <TText>Du har hittat {foundCreature.found_name}!</TText>}
       <TText style={{ fontSize: 30, marginBottom: 40 }}>Detector</TText>
 
       <View style={styles.circleContainer}>
@@ -243,8 +244,8 @@ export default function Detector() {
         <TouchableOpacity
           style={styles.button}
           onPress={async () => {
-            console.log("fånga pressed");
-            await capture();
+            console.log("pressed");
+            await startEncounter();
           }}
         >
           <TText style={styles.buttonText}>Fånga!</TText>

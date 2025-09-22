@@ -58,6 +58,7 @@ export async function getCreaturesNearAsync(
     functionId: GET_NEAR_CREATURES_FN_ID,
     body: `{ "lat": ${userLat}, "lng": ${userLong}, "radius": 200 }`,
   });
+  console.log(result.responseBody);
   return JSON.parse(result.responseBody);
 }
 
@@ -108,6 +109,13 @@ export function getCreatureImage(creatureId: string) {
   const url = storage.getFileDownloadURL(bucketId, `c-${creatureId}-big`).toString();
   console.log(url);
   return url;
+}
+
+export function getImageUrl(id:string) {
+  console.log("trying to get image:", id);
+  const url = storage.getFileDownloadURL(bucketId, id);
+  console.log(url);
+  return url.toString();
 }
 
 import type { Result } from "./result";

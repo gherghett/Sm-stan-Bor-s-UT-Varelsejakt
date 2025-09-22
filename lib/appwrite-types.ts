@@ -1,5 +1,3 @@
-
-
 //------------------- Types -------------------
 export type AppwriteFunctionResult = {
   $createdAt: string;
@@ -28,15 +26,23 @@ export type AppwriteGetNearestResponseBody =
   | { ok: true; reading: "found"; found: CreatureFound; detected: null }
   | { ok: true; reading: "detected"; found: null; detected: CreatureDetected }
   | { ok: true; reading: null; found: null; detected: null }
-  | { ok: false; reading?: null; found?: null; detected?: null; error?: string };
+  | {
+      ok: false;
+      reading?: null;
+      found?: null;
+      detected?: null;
+      error?: string;
+    };
 
 export interface CreatureFound {
   id: string;
   name: string;
+  found_name: string;
   lat: number;
   lng: number;
   distance_m: number;
   bearing_deg: number;
+  encounter: string;
 }
 
 export interface CreatureDetected {
