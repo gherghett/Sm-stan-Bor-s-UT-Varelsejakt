@@ -183,7 +183,7 @@ export default function Detector() {
     setFoundCreature(null);
     console.log("setting current encounter to ", fc);
     setCurrentEncounter({...fc});
-    router.push("/(user-space)/encounter"); 
+    router.push("/encounter"); 
 
     // here we could trigger some animation or something
 
