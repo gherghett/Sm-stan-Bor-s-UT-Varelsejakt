@@ -16,6 +16,7 @@ import { CreatureFoundwImage } from "../app/(tabs)/detektor";
 
 interface CatalogContextValue {
   catalog: Creature[] | null;
+  clues: Creature[] | null;
   loading: boolean;
   error: string | null;
   reloadCatalog: () => Promise<void>;
@@ -42,6 +43,7 @@ interface CatalogProviderProps {
 function CatalogProvider({ children }: CatalogProviderProps) {
   const { user, authChecked } = useUser();
   const [catalog, setCatalog] = useState<Creature[] | null>(null);
+  const [clues, setClues] = useState<Creature[] | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [currentEncounter, setCurrentEncounter] = useState<any>(null);
@@ -52,14 +54,17 @@ function CatalogProvider({ children }: CatalogProviderProps) {
     try {
       const result = await getUserCreatureCatalog(u);
       if (result.status === "success") {
-        setCatalog(result.result ?? []);
+        setCatalog(result.result.creatures ?? []);
+        setClues(result.result.clues ?? []);
       } else {
         setError("Failed to load catalog");
         setCatalog(null);
+        setClues(null);
       }
     } catch (e: any) {
       setError(e?.message || "Unknown error");
       setCatalog(null);
+        setClues(null);
     } finally {
       setLoading(false);
     }
@@ -70,6 +75,8 @@ function CatalogProvider({ children }: CatalogProviderProps) {
       loadCatalog(user);
     } else {
       setCatalog(null);
+        setClues(null);
+
     }
   }, [authChecked, user]);
 
@@ -77,6 +84,7 @@ function CatalogProvider({ children }: CatalogProviderProps) {
     <CatalogContext.Provider
       value={{
         catalog,
+        clues, 
         loading,
         error,
         reloadCatalog: () => (user ? loadCatalog(user) : Promise.resolve()),

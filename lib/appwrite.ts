@@ -84,7 +84,7 @@ export async function captureCreatureAsync(
 const GET_CATALOG_FN_ID = "68cd44ad0038458c10d6";
 export async function getUserCreatureCatalog(
   user: AppwriteUser
-): Promise<Result<Creature[]>> {
+): Promise<Result<{creatures : Creature[], clues : Creature[]}>> {
   try {
     const result = await functions.createExecution({
       functionId: GET_CATALOG_FN_ID,
@@ -94,7 +94,11 @@ export async function getUserCreatureCatalog(
       ...creature,
       imageUrl: storage.getFileDownloadURL(bucketId, `c-${creature.$id}-big`).toString()
     }));
-    return { status: "success", result: creatures as Creature[] };
+    const clues = body.clues.map((creature: any) => ({
+      ...creature,
+      imageUrl: storage.getFileDownloadURL(bucketId, `c-${creature.$id}-big`).toString()
+    }));
+    return { status: "success", result: {creatures: creatures as Creature[], clues: clues as Creature[]} };
   } catch (e) {
     console.log(e);
     return { status: "fail" };
