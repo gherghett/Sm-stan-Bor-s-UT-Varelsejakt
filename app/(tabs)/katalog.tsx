@@ -8,14 +8,14 @@ import {
   Pressable,
 } from "react-native";
 import React, { useEffect, useState } from "react";
-import { Creature, getUserCreatureCatalog } from "../../../lib/appwrite";
-import { useUser } from "../../../hooks/use-users";
-import type { Result } from "../../../lib/result";
-import { useCatalog } from "../../../context/catalog-context";
-import TView from "../../../components/TView";
-import TText from "../../../components/TText";
-import TTitle from "../../../components/TTitle";
-import { useTheme } from "../../../context/theme-context";
+import { Creature, getUserCreatureCatalog } from "../../lib/appwrite";
+import { useUser } from "../../hooks/use-users";
+import type { Result } from "../../lib/result";
+import { useCatalog } from "../../context/catalog-context";
+import TView from "../../components/TView";
+import TText from "../../components/TText";
+import TTitle from "../../components/TTitle";
+import { useTheme } from "../../context/theme-context";
 import { useRouter } from "expo-router";
 
 export default function katalog() {

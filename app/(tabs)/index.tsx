@@ -3,13 +3,13 @@ import { useRouter } from "expo-router";
 import { Link } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import React from "react";
-import { Colors } from "../../../constants/colors";
+import { Colors } from "../../constants/colors";
 
 //themed components
-import TView from "../../../components/TView";
-import TLink from "../../../components/TLink";
-import { useUser } from "../../../hooks/use-users";
-import TText from "../../../components/TText";
+import TView from "../../components/TView";
+import TLink from "../../components/TLink";
+import { useUser } from "../../hooks/use-users";
+import TText from "../../components/TText";
 
 export default function HomeScreen() {
   const { user, authChecked, logout } = useUser();

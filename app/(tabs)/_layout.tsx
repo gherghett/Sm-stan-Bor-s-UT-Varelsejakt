@@ -1,26 +1,23 @@
 import { Tabs } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useColorScheme } from "react-native";
-import { Colors } from "../../../constants/colors";
-import UserOnly from "../../../components/auth/user-only";
-import { useUser } from "../../../hooks/use-users";
-import { CatalogProvider, useCatalog } from "../../../context/catalog-context";
+import { Colors } from "../../constants/colors";
+import { CatalogProvider, useCatalog } from "../../context/catalog-context";
 
 export default function TabsLayout() {
   const colorScheme = useColorScheme();
   const theme = Colors[colorScheme ?? "light"];
-  const { user } = useUser();
   const { catalog } = useCatalog();
 
   return (
     <Tabs
       screenOptions={{
-        tabBarStyle: { backgroundColor: theme.background },
-        tabBarActiveTintColor: theme.title,
-        tabBarInactiveTintColor: theme.text,
-        headerStyle: { backgroundColor: theme.navBackground },
-        headerTintColor: theme.text,
-        headerTitleStyle: { color: theme.title },
+        // tabBarStyle: { backgroundColor: theme.background },
+        // tabBarActiveTintColor: theme.title,
+        // tabBarInactiveTintColor: theme.text,
+        // headerStyle: { backgroundColor: theme.navBackground },
+        // headerTintColor: theme.text,
+        // headerTitleStyle: { color: theme.title },
       }}
     >
       <Tabs.Screen

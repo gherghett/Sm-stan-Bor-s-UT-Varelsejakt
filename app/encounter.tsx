@@ -1,11 +1,11 @@
 import { StyleSheet, Text, View, Image, Button } from "react-native";
 import React, { useEffect } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { captureCreatureAsync, getImageUrl } from "../../lib/appwrite";
-import TText from "../../components/TText";
-import TView from "../../components/TView";
+import { captureCreatureAsync, getImageUrl } from "../lib/appwrite";
+import TText from "../components/TText";
+import TView from "../components/TView";
 import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
-import { useCatalog } from "../../context/catalog-context";
+import { useCatalog } from "../context/catalog-context";
 
 type Step =
   | {
@@ -28,24 +28,25 @@ export default function encounter() {
   const navigation = useNavigation();
 
   // Determine encounter data based on the path
-  const encounterData = id !== "default" 
-    ? (() => {
-        const creature = catalog!.find((c) => c.$id == id);
-        return JSON.parse(creature!.encounter) as Encounter;
-      })()
-    : JSON.parse(currentEncounter.encounter) as Encounter;
-  
+  const encounterData =
+    id !== "default"
+      ? (() => {
+          const creature = catalog!.find((c) => c.$id == id);
+          return JSON.parse(creature!.encounter) as Encounter;
+        })()
+      : (JSON.parse(currentEncounter.encounter) as Encounter);
+
   const encounter = encounterData;
   const content = encounter.content;
 
   console.log("Encounter screen loaded with title:", encounter.title);
 
-  useEffect(() => {
-    console.log("Setting navigation options with title:", encounter.title);
-    navigation.setOptions({
-      title: encounter.title,
-    });
-  }, [navigation, encounter.title]);
+  // useEffect(() => {
+  //   console.log("Setting navigation options with title:", encounter.title);
+  //   navigation.setOptions({
+  //     title: encounter.title,
+  //   });
+  // }, [navigation, encounter.title]);
 
   // const saveCreature = async  () => {
   //       const result = await captureCreatureAsync(

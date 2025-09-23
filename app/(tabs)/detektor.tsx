@@ -1,7 +1,7 @@
 import React, { act, useEffect, useRef, useState } from "react";
-import TView from "../../../components/TView";
-import TText from "../../../components/TText";
-import TLink from "../../../components/TLink";
+import TView from "../../components/TView";
+import TText from "../../components/TText";
+import TLink from "../../components/TLink";
 import {
   View,
   Animated,
@@ -13,15 +13,15 @@ import {
   getCreaturesNearAsync,
   getCreatureImage,
   captureCreatureAsync,
-} from "../../../lib/appwrite";
+} from "../../lib/appwrite";
 import {
   AppwriteGetNearestResponseBody,
   CreatureDetected,
   CreatureFound,
-} from "../../../lib/appwrite-types";
-import { bearing2svenska, meter2RandUnit } from "../../../lib/bearings";
+} from "../../lib/appwrite-types";
+import { bearing2svenska, meter2RandUnit } from "../../lib/bearings";
 import * as Location from "expo-location";
-import { useCatalog } from "../../../context/catalog-context";
+import { useCatalog } from "../../context/catalog-context";
 import { useRouter } from "expo-router";
 
 export interface CreatureFoundwImage extends CreatureFound {

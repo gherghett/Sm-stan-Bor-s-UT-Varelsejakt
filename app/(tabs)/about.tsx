@@ -1,7 +1,7 @@
 import React from "react";
-import TView from "../../../components/TView";
-import TText from "../../../components/TText";
-import TLink from "../../../components/TLink";
+import TView from "../../components/TView";
+import TText from "../../components/TText";
+import TLink from "../../components/TLink";
 
 export default function About() {
   return (

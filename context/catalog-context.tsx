@@ -12,7 +12,7 @@ import {
 } from "../lib/appwrite";
 import type { Result } from "../lib/result";
 import { useUser } from "../hooks/use-users";
-import { CreatureFoundwImage } from "../app/(user-space)/(tabs)/detektor";
+import { CreatureFoundwImage } from "../app/(tabs)/detektor";
 
 interface CatalogContextValue {
   catalog: Creature[] | null;
