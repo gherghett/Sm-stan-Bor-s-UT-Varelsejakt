@@ -22,16 +22,18 @@ export function bearing2svenska(bearing: number) {
   return dirs_sv[idx];
 }
 
-export const meter2RandUnit = (meters: number) => {
+export const meter2RandUnit = (meters: number, unit: number = -1) => {
   const units = [
-    { unit: "feet", value: meters * 3.28084, format: (v: number) => `${Math.round(v)} fot` },
-    { unit: "inches", value: meters * 39.3701, format: (v: number) => `${Math.round(v)} tum` },
-    { unit: "armlängder", value: meters / 0.7, format: (v: number) => `${Math.round(v)} armlängder` },
-    { unit: "steg", value: meters / 0.75, format: (v: number) => `${Math.round(v)} steg` },
-    { unit: "kast", value: meters / 10, format: (v: number) => `${v.toFixed(1)} kast` },
-    { unit: "hopp", value: meters / 1.5, format: (v: number) => `${Math.round(v)} hopp` },
+    `${Math.round(meters * 3.28084)} fot`,
+    `${Math.round(meters * 39.3701)} tum`,
+    `${Math.round(meters / 0.7)} armlängder`,
+    `${Math.round(meters / 0.75)} steg`,
+    `${(meters / 10).toFixed(1)} kast`,
+    `${Math.round(meters / 1.5)} hopp`,
   ];
-  const idx = Math.floor(Math.random() * units.length);
-  const chosen = units[idx];
-  return chosen.format(chosen.value);
+  const idx =
+    unit >= 0 && unit < units.length 
+      ? unit
+      : Math.floor(Math.random() * units.length);
+  return units[idx];
 };
