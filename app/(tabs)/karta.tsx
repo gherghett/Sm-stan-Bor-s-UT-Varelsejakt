@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { StyleSheet, View, Text, Pressable } from "react-native";
+import { StyleSheet, View } from "react-native";
 import MapView, {
   Callout,
   Marker,
@@ -13,27 +13,12 @@ import { useRouter } from "expo-router";
 const creatureMarkerIcon = require("../../assets/creature_marker.png");
 const lookingglassMarkerIcon = require("../../assets/lookingglass_marker.png");
 
-
-const markers = [
-  {
-    id: "allegatan-46",
-    title: "Allégatan 46, Borås",
-    description: "Källa: Eniro",
-    coordinate: { latitude: 57.7203767, longitude: 12.9422495 },
-  },
-  {
-    id: "yh-boras",
-    title: "Yrkeshögskolan i Borås (Fabriksgatan 11)",
-    description: "Källor: fastighet.info, hitta.se",
-    coordinate: { latitude: 57.7176, longitude: 12.9425 },
-  },
-];
-
 function creature2Marker(c: Creature) {
   return {
     id: c.$id,
     title: c.name,
-    description: "Källor: fastighet.info, hitta.se",
+    // description: "Källor: fastighet.info, hitta.se",
+    type: c.type,
 
     coordinate: { latitude: Number(c.lat), longitude: Number(c.long) },
   };
@@ -42,9 +27,8 @@ function creature2Marker(c: Creature) {
 function clue2Marker(c: Creature) {
   return {
     id: c.$id,
-    title: c.name,
-    description: "Källor: fastighet.info, hitta.se",
-
+    title: c.clue!,
+    // description: c.clue,
     coordinate: { latitude: Number(c.lat), longitude: Number(c.long) },
   };
 }
@@ -92,7 +76,7 @@ export default function App() {
               coordinate={m.coordinate}
               title={m.title}
               // description={m.description}
-              image={creatureMarkerIcon}
+              image={m.type !== "plot" ? creatureMarkerIcon : undefined}
               onCalloutPress={() => {
                 console.log("Creature pressed:", m.title);
                 router.push(`/encounter?id=${m.id}`);
@@ -105,7 +89,7 @@ export default function App() {
               key={m.id}
               coordinate={m.coordinate}
               title={m.title}
-              description={m.description}
+              // description={m.description}
               image={lookingglassMarkerIcon}
             >
               <Callout>

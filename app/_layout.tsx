@@ -9,6 +9,8 @@ import { ThemeProvider } from "../context/theme-context";
 import { useUser } from "../hooks/use-users";
 import { CatalogProvider } from "../context/catalog-context";
 
+SplashScreen.preventAutoHideAsync();
+
 export default function RootLayout() {
   let colorScheme = useColorScheme();
   const theme = Colors[colorScheme ?? "light"];

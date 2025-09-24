@@ -126,6 +126,7 @@ import type { Result } from "./result";
 
 export interface Creature {
   $id: string;
+  type: string;
   name: string;
   lat: number;
   long: number;

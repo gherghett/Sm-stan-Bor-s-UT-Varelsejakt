@@ -19,13 +19,13 @@ export default function HomeScreen() {
   return (
     <TView style={{ flex: 1 }}>
       <Text style={{ color: theme.text }}>Home Page</Text>
-      {authChecked && !!user && (
+      {authChecked && user && (
         <>
           <TText>Logged in as: {user.email}</TText>
           <Button title="Log Out" onPress={() => logout()} />
         </>
       )}
-      {authChecked && !!!user && (
+      {authChecked && !user && (
         <Button title="Log in" onPress={() => router.push('/login')} />
       )}
     </TView>
