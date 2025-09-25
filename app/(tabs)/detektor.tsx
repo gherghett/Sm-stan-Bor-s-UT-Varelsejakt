@@ -8,7 +8,9 @@ import {
   TouchableOpacity,
   StyleSheet,
   Image,
+  Easing,
 } from "react-native";
+
 import {
   getCreaturesNearAsync,
   getCreatureImage,
@@ -26,7 +28,7 @@ import { useRouter } from "expo-router";
 import { useCompass } from "../../hooks/use-compass";
 
 export interface CreatureFoundwImage extends CreatureFound {
-  img: string
+  img: string;
 }
 
 export default function Detector() {
@@ -44,10 +46,15 @@ export default function Detector() {
     setDistanceText(meter2RandUnit(detectedCreature.distance_m));
   }, [detectedCreature]);
 
-  const [foundCreature, setFoundCreature] = useState<null | CreatureFoundwImage>(
-    null
-  );
-  const {location, updateLocation} = useCompass();
+  const [foundCreature, setFoundCreature] =
+    useState<null | CreatureFoundwImage>(null);
+  const { location, updateLocation, heading, initializeCompass } = useCompass();
+  // console.log("heading ", heading?.trueHeading);
+
+  // Initialize compass on component mount
+  useEffect(() => {
+    initializeCompass();
+  }, [initializeCompass]);
 
   //---Animation
   const pulseAnim = useRef(new Animated.Value(0)).current;
@@ -98,7 +105,7 @@ export default function Detector() {
       // Creature found and can be captured
       console.log("Detector: creature found", body.found);
       const imageUrl = getCreatureImage(body.found.id);
-      setFoundCreature({ ...body.found, img: imageUrl});
+      setFoundCreature({ ...body.found, img: imageUrl });
       console.log("Detector: image url", imageUrl);
       setDetectedCreature(null);
     }
@@ -123,17 +130,43 @@ export default function Detector() {
     const fc = foundCreature;
     setFoundCreature(null);
     console.log("setting current encounter to ", fc);
-    setCurrentEncounter({...fc});
-    router.push("/encounter"); 
+    setCurrentEncounter({ ...fc });
+    router.push("/encounter");
   };
   // -------------
 
   return (
     <TView style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      {!!foundCreature && <TText>Du har hittat {foundCreature.found_name}!</TText>}
+      {/* Compass ring (under everything else) */}
+      {!!foundCreature && (
+        <TText>Du har hittat {foundCreature.found_name}!</TText>
+      )}
       <TText style={{ fontSize: 30, marginBottom: 40 }}>Detector</TText>
 
       <View style={styles.circleContainer}>
+
+        <Animated.View
+          pointerEvents="none"
+          style={[
+            styles.compassRing,
+            {
+              // SIMPLE (no animation):
+              transform: [{ rotate: `${-(heading?.trueHeading ?? 0)}deg` }],
+            },
+          ]}
+        >
+          {/* Cardinal letters */}
+          <TText style={[styles.cardinal, styles.cardinalN]}>N</TText>
+          <TText style={[styles.cardinal, styles.cardinalE]}>E</TText>
+          <TText style={[styles.cardinal, styles.cardinalS]}>S</TText>
+          <TText style={[styles.cardinal, styles.cardinalW]}>W</TText>
+
+          {/* (Optional) small ticks at 0/90/180/270 */}
+          <View style={[styles.tick, styles.tickTop]} />
+          <View style={[styles.tick, styles.tickRight]} />
+          <View style={[styles.tick, styles.tickBottom]} />
+          <View style={[styles.tick, styles.tickLeft]} />
+        </Animated.View>
         {!!foundCreature && (
           <Image
             resizeMode="cover"
@@ -224,6 +257,46 @@ const styles = StyleSheet.create({
     borderColor: "white",
     position: "absolute",
   },
+
+  /* --- Compass ring --- */
+  compassRing: {
+    position: "absolute",
+    width: 250, // 220 if you enlarge container
+    height: 250, // 220 if you enlarge container
+    borderRadius: 125,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.35)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  /* Cardinal letters positioned on the rim */
+  cardinal: {
+    position: "absolute",
+    fontSize: 14,
+    fontWeight: "700",
+    color: "white",
+    textShadowColor: "rgba(0,0,0,0.35)",
+    textShadowRadius: 4,
+  },
+  cardinalN: { top: 6, left: "50%", transform: [{ translateX: -6 }] },
+  cardinalS: { bottom: 6, left: "50%", transform: [{ translateX: -6 }] },
+  cardinalE: { right: 6, top: "50%", transform: [{ translateY: -8 }] },
+  cardinalW: { left: 6, top: "50%", transform: [{ translateY: -8 }] },
+
+  /* Optional ticks */
+  tick: {
+    position: "absolute",
+    width: 2,
+    height: 10,
+    backgroundColor: "rgba(255,255,255,0.6)",
+    borderRadius: 1,
+  },
+  tickTop: { top: 0, left: "50%", transform: [{ translateX: -1 }] },
+  tickRight: { right: 0, top: "50%", transform: [{ rotate: "90deg"},{translateX: -2 },{translateY:1}] },
+  tickBottom: { bottom: 0, left: "50%", transform: [{ translateX: -1 }] },
+  tickLeft: { left: 0, top: "50%", transform: [{ rotate: "90deg"},{translateX: -2 },{translateY:1}] },
+
   button: {
     backgroundColor: "#007AFF",
     paddingHorizontal: 30,
