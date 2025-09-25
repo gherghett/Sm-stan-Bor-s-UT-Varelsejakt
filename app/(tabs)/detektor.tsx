@@ -48,13 +48,31 @@ export default function Detector() {
 
   const [foundCreature, setFoundCreature] =
     useState<null | CreatureFoundwImage>(null);
+  const [detectionDotRotation, setDetectionDotRotation] = useState<number>(0);
   const { location, updateLocation, heading, initializeCompass } = useCompass();
-  // console.log("heading ", heading?.trueHeading);
 
   // Initialize compass on component mount
   useEffect(() => {
     initializeCompass();
   }, [initializeCompass]);
+
+  // Calculate detection dot rotation based on compass heading and creature bearing
+  useEffect(() => {
+    if (!detectedCreature) {
+      setDetectionDotRotation(0);
+      return;
+    }
+
+    const compassHeading = heading?.trueHeading ?? 0;
+    const creatureBearing = detectedCreature.bearing_deg;
+    
+    // Calculate the relative angle: creature bearing minus compass heading
+    // This will rotate the dot to point in the correct direction relative to the compass
+    const relativeBearing = creatureBearing - compassHeading;
+    
+    setDetectionDotRotation(relativeBearing);
+
+  }, [heading?.trueHeading, detectedCreature]);
 
   //---Animation
   const pulseAnim = useRef(new Animated.Value(0)).current;
@@ -144,7 +162,22 @@ export default function Detector() {
       <TText style={{ fontSize: 30, marginBottom: 40 }}>Detector</TText>
 
       <View style={styles.circleContainer}>
-
+        {detectedCreature && (
+          <Animated.View
+            pointerEvents="none"
+            style={[
+              styles.detectionDotRing,
+              {
+                transform: [
+                  { rotate: `${detectionDotRotation}deg` },
+                  { translateY: -detectedCreature?.distance_m }
+                ],
+              },
+            ]}
+          >
+            <View style={[styles.detectionDot]}></View>
+          </Animated.View>
+        )}
         <Animated.View
           pointerEvents="none"
           style={[
@@ -257,6 +290,16 @@ const styles = StyleSheet.create({
     borderColor: "white",
     position: "absolute",
   },
+  /* --- Detection Dot Ring ring --- */
+  detectionDotRing: {
+    position: "absolute",
+    width: 200, // 220 if you enlarge container
+    height: 200, // 220 if you enlarge container
+    borderRadius: 100,
+    borderWidth: 0,
+    justifyContent: "center",
+    alignItems: "center",
+  },
 
   /* --- Compass ring --- */
   compassRing: {
@@ -268,6 +311,14 @@ const styles = StyleSheet.create({
     borderColor: "rgba(255,255,255,0.35)",
     justifyContent: "center",
     alignItems: "center",
+  },
+
+  detectionDot: {
+    position: "relative",
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: "#fff",
   },
 
   /* Cardinal letters positioned on the rim */
@@ -293,9 +344,17 @@ const styles = StyleSheet.create({
     borderRadius: 1,
   },
   tickTop: { top: 0, left: "50%", transform: [{ translateX: -1 }] },
-  tickRight: { right: 0, top: "50%", transform: [{ rotate: "90deg"},{translateX: -2 },{translateY:1}] },
+  tickRight: {
+    right: 0,
+    top: "50%",
+    transform: [{ rotate: "90deg" }, { translateX: -2 }, { translateY: 1 }],
+  },
   tickBottom: { bottom: 0, left: "50%", transform: [{ translateX: -1 }] },
-  tickLeft: { left: 0, top: "50%", transform: [{ rotate: "90deg"},{translateX: -2 },{translateY:1}] },
+  tickLeft: {
+    left: 0,
+    top: "50%",
+    transform: [{ rotate: "90deg" }, { translateX: -2 }, { translateY: 1 }],
+  },
 
   button: {
     backgroundColor: "#007AFF",
