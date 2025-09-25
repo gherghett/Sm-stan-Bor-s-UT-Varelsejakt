@@ -23,6 +23,7 @@ import { bearing2svenska, meter2RandUnit } from "../../lib/bearings";
 import * as Location from "expo-location";
 import { useCatalog } from "../../context/catalog-context";
 import { useRouter } from "expo-router";
+import { useCompass } from "../../hooks/use-compass";
 
 export interface CreatureFoundwImage extends CreatureFound {
   img: string
@@ -46,47 +47,7 @@ export default function Detector() {
   const [foundCreature, setFoundCreature] = useState<null | CreatureFoundwImage>(
     null
   );
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  const [location, setLocation] = useState<Location.LocationObject | null>(
-    null
-  );
-  const [permissionStatus, setPermissionStatus] =
-    useState<Location.PermissionStatus | null>(null);
-
-  // Location permission
-  useEffect(() => {
-    (async () => {
-      const status = await askForLocationPermission();
-      if (status !== "granted") {
-        setErrorMsg("Permission to access location was denied");
-        return;
-      }
-      await getCurrentLocation();
-    })();
-  }, []);
-
-  // ------ Location --------------------
-  async function askForLocationPermission() {
-    const { status } = await Location.requestForegroundPermissionsAsync();
-    setPermissionStatus(status);
-    return status;
-  }
-
-  async function getCurrentLocation() {
-    if (permissionStatus !== "granted") {
-      const status = await askForLocationPermission();
-      if (status !== "granted") {
-        setErrorMsg("Permission to access location was denied");
-        return;
-      }
-    }
-    let location = await Location.getCurrentPositionAsync({
-      accuracy: Location.Accuracy.Highest, // or Location.Accuracy.BestForNavigation
-    });
-    setLocation(location);
-    return location;
-  }
-  //--------------------
+  const {location, updateLocation} = useCompass();
 
   //---Animation
   const pulseAnim = useRef(new Animated.Value(0)).current;
@@ -102,11 +63,10 @@ export default function Detector() {
       useNativeDriver: true,
     }).start();
   };
-  //----
 
   // --- API communication /game logic
   const updateCreatureInfo = async () => {
-    const newLocation = await getCurrentLocation();
+    const newLocation = await updateLocation();
     if (!!!newLocation) return;
 
     // Real location
@@ -114,17 +74,6 @@ export default function Detector() {
       newLocation?.coords.latitude.toString(),
       newLocation?.coords.longitude.toString()
     );
-
-    // Spoof coordinates for testing:
-    // const body = await getCreaturesNearAsync("57.69503997613099", "12.85280862926597"); // nothing found
-    // const body = await getCreaturesNearAsync("57.71918385006534", "12.939521137065727"); // barkott detected
-    // const body = await getCreaturesNearAsync(
-    //   "57.71870608939903",
-    //   "12.940899606667822"
-    // ); // barkott norr
-    // const body = await getCreaturesNearAsync(
-    // "57.71937251543197", "12.94090546319178"
-    // ); // barkott
 
     // The result of getCreaturesNearAsync is a discriminated union:
     // 1. { ok: true, reading: null, found: null, detected: null }
@@ -162,14 +111,6 @@ export default function Detector() {
     if (!!!location) {
       return;
     }
-    console.log("capture");
-    //barkott
-    // const result = await captureCreatureAsync(
-    //   "51.719376146193206",
-    //   "12.940858281030701",
-    //   "68cc1d1f00038c5a257c"
-    // );
-
     captureCreatureAsync(
       location.coords.latitude.toString(),
       location.coords.longitude.toString(),
@@ -184,16 +125,6 @@ export default function Detector() {
     console.log("setting current encounter to ", fc);
     setCurrentEncounter({...fc});
     router.push("/encounter"); 
-
-    // here we could trigger some animation or something
-
-    //johanna
-    // const result  =await captureCreatureAsync(
-    //   "57.719024329519236",
-    //   "12.94245401320513",
-    //   "68caead000316c7b2bae"
-    // );
-    // console.log(result);
   };
   // -------------
 
