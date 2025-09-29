@@ -15,12 +15,12 @@ import { useCatalog } from "../../context/catalog-context";
 import TView from "../../components/TView";
 import TText from "../../components/TText";
 import TTitle from "../../components/TTitle";
-import { useTheme } from "../../context/theme-context";
+import { useTheme } from "react-native-paper";
 import { useRouter } from "expo-router";
 
 export default function katalog() {
   const { catalog, loading, error, currentEncounter } = useCatalog();
-  const { theme } = useTheme();
+  const theme = useTheme();
   const router = useRouter();
 
   return (
@@ -62,7 +62,7 @@ export default function katalog() {
                 style={({ pressed }) => [
                   styles.card,
                   {
-                    backgroundColor: theme.uiBackground,
+                    backgroundColor: theme.colors.background,
                     opacity: pressed ? 0.8 : 1,
                   },
                 ]}

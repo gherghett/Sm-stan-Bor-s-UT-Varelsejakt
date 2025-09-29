@@ -5,17 +5,17 @@ import {
   TextStyle,
 } from "react-native";
 import React from "react";
-import { useTheme } from "../context/theme-context";
+import { useTheme } from "react-native-paper";
 
 export default function TText({ style, children, ...props }: React.ComponentProps<typeof TextInput>) {
-  const { theme } = useTheme();
+  const theme = useTheme();
   return (
     <TextInput
       style={[
         {
-          color: theme.text,
-          backgroundColor: theme.uiBackground,
-          borderColor: theme.text,
+          color: theme.colors.onSurface,
+          backgroundColor: theme.colors.surface,
+          borderColor: theme.colors.outline,
           borderWidth: 1,
           borderRadius: 8,
           paddingHorizontal: 12,
@@ -24,7 +24,7 @@ export default function TText({ style, children, ...props }: React.ComponentProp
         },
         style,
       ]}
-      placeholderTextColor="#888"
+      placeholderTextColor={theme.colors.onSurfaceVariant}
       {...props}
     >
       {children}
