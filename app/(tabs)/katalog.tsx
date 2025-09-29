@@ -13,13 +13,20 @@ import { useUser } from "../../hooks/use-users";
 import type { Result } from "../../lib/result";
 import { useCatalog } from "../../context/catalog-context";
 import { useTheme, Text as PaperText, Card, SegmentedButtons } from "react-native-paper";
-import { useRouter } from "expo-router";
+import { useRouter, useFocusEffect } from "expo-router";
 
 export default function katalog() {
-  const { catalog, loading, error, currentEncounter } = useCatalog();
+  const { catalog, loading, error, currentEncounter, markCatalogAsViewed } = useCatalog();
   const theme = useTheme();
   const router = useRouter();
   const [filterType, setFilterType] = useState('all');
+
+  // Mark catalog as viewed when screen is focused
+  useFocusEffect(
+    React.useCallback(() => {
+      markCatalogAsViewed();
+    }, [markCatalogAsViewed])
+  );
 
   // Filter catalog based on selected type
   const filteredCatalog = catalog ? catalog.filter(item => {

@@ -3,7 +3,7 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { useCatalog } from "../../context/catalog-context";
 
 export default function TabsLayout() {
-  const { catalog } = useCatalog();
+  const { catalog, newCreaturesCount, hasNewCreatures } = useCatalog();
 
   return (
     <Tabs
@@ -30,7 +30,7 @@ export default function TabsLayout() {
         options={{
           title: "Katalog",
           href: catalog ? (catalog.length > 0 ? undefined : null) : null,
-          tabBarBadge: "!", // e.g. number of creatures
+          tabBarBadge: hasNewCreatures ? newCreaturesCount : undefined,
           tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons name="book-open-variant" color={color} size={24} />
           ),
