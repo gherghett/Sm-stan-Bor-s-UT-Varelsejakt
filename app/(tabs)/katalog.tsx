@@ -29,9 +29,9 @@ export default function katalog() {
 
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      <PaperText variant="headlineMedium" style={styles.title}>
+      {/* <PaperText variant="headlineMedium" style={styles.title}>
         Varelsekatalog
-      </PaperText>
+      </PaperText> */}
       
       <SegmentedButtons
         value={filterType}
@@ -93,31 +93,23 @@ export default function katalog() {
         >
           <View style={styles.grid}>
             {filteredCatalog.map((creature) => (
-              <Pressable
+              <Card
                 key={creature.$id}
+                style={styles.card}
                 onPress={() => {
                   // Navigate to creature detail or handle press
                   console.log("Creature pressed:", creature.name);
                   router.push(`/encounter?id=${creature.$id}`);
                 }}
-                style={({ pressed }) => [
-                  styles.card,
-                  {
-                    backgroundColor: theme.colors.surface,
-                    borderColor: theme.colors.outline,
-                    opacity: pressed ? 0.8 : 1,
-                  },
-                ]}
               >
-                <Image
+                <Card.Cover
                   source={{ uri: creature.imageUrl }}
                   style={styles.creatureImage}
-                  resizeMode="cover"
                 />
-                <View style={styles.cardContent}>
+                <Card.Content style={styles.cardContent}>
                   <PaperText style={styles.creatureName}>{creature.name}</PaperText>
-                </View>
-              </Pressable>
+                </Card.Content>
+              </Card>
             ))}
           </View>
         </ScrollView>
@@ -160,17 +152,6 @@ const styles = StyleSheet.create({
   card: {
     width: "48%",
     marginBottom: 16,
-    borderRadius: 12,
-    borderWidth: 1,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-    overflow: "hidden",
   },
   creatureImage: {
     width: "100%",
