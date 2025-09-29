@@ -12,19 +12,46 @@ import { Creature, getUserCreatureCatalog } from "../../lib/appwrite";
 import { useUser } from "../../hooks/use-users";
 import type { Result } from "../../lib/result";
 import { useCatalog } from "../../context/catalog-context";
-import { useTheme, Text as PaperText, Card } from "react-native-paper";
+import { useTheme, Text as PaperText, Card, SegmentedButtons } from "react-native-paper";
 import { useRouter } from "expo-router";
 
 export default function katalog() {
   const { catalog, loading, error, currentEncounter } = useCatalog();
   const theme = useTheme();
   const router = useRouter();
+  const [filterType, setFilterType] = useState('all');
+
+  // Filter catalog based on selected type
+  const filteredCatalog = catalog ? catalog.filter(item => {
+    if (filterType === 'all') return true;
+    return item.type === filterType;
+  }) : [];
 
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <PaperText variant="headlineMedium" style={styles.title}>
         Varelsekatalog
       </PaperText>
+      
+      <SegmentedButtons
+        value={filterType}
+        onValueChange={setFilterType}
+        buttons={[
+          {
+            value: 'all',
+            label: 'Allt',
+          },
+          {
+            value: 'creature',
+            label: 'Varelser',
+          },
+          {
+            value: 'plot',
+            label: 'Möten',
+          },
+        ]}
+        style={styles.segmentedButtons}
+      />
       
       {loading && (
         <View style={styles.messageContainer}>
@@ -40,7 +67,7 @@ export default function katalog() {
         </View>
       )}
 
-      {catalog && catalog.length === 0 && (
+      {catalog && filteredCatalog.length === 0 && filterType === 'all' && (
         <View style={styles.messageContainer}>
           <PaperText variant="bodyLarge" style={{ textAlign: 'center', opacity: 0.7 }}>
             No creatures found yet.
@@ -51,13 +78,21 @@ export default function katalog() {
         </View>
       )}
 
-      {catalog && catalog.length > 0 && (
+      {catalog && filteredCatalog.length === 0 && filterType !== 'all' && (
+        <View style={styles.messageContainer}>
+          <PaperText variant="bodyLarge" style={{ textAlign: 'center', opacity: 0.7 }}>
+            No {filterType === 'creature' ? 'varelser' : 'möten'} found yet.
+          </PaperText>
+        </View>
+      )}
+
+      {catalog && filteredCatalog.length > 0 && (
         <ScrollView
           style={styles.scrollView}
           showsVerticalScrollIndicator={false}
         >
           <View style={styles.grid}>
-            {catalog.map((creature) => (
+            {filteredCatalog.map((creature) => (
               <Pressable
                 key={creature.$id}
                 onPress={() => {
@@ -100,6 +135,9 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginBottom: 20,
     fontWeight: "bold",
+  },
+  segmentedButtons: {
+    marginBottom: 20,
   },
   messageContainer: {
     flex: 1,
