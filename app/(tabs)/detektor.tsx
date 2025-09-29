@@ -26,12 +26,14 @@ import * as Location from "expo-location";
 import { useCatalog } from "../../context/catalog-context";
 import { useRouter } from "expo-router";
 import { useCompass } from "../../hooks/use-compass";
+import { Button, useTheme } from "react-native-paper";
 
 export interface CreatureFoundwImage extends CreatureFound {
   img: string;
 }
 
 export default function Detector() {
+  const theme = useTheme();
   const { reloadCatalog, setCurrentEncounter } = useCatalog();
   const [detectedCreature, setDetectedCreature] =
     useState<null | CreatureDetected>(null);
@@ -168,7 +170,7 @@ export default function Detector() {
               },
             ]}
           >
-            <View style={[styles.detectionDot]}></View>
+            <View style={[styles.detectionDot, { backgroundColor: theme.colors.secondary }]}></View>
           </Animated.View>
         )}
         <Animated.View
@@ -176,22 +178,23 @@ export default function Detector() {
           style={[
             styles.compassRing,
             {
+              borderColor: `${theme.colors.outline}66`, // 40% opacity
               // SIMPLE (no animation):
               transform: [{ rotate: `${-(heading?.trueHeading ?? 0)}deg` }],
             },
           ]}
         >
           {/* Cardinal letters */}
-          <TText style={[styles.cardinal, styles.cardinalN]}>N</TText>
-          <TText style={[styles.cardinal, styles.cardinalE]}>E</TText>
-          <TText style={[styles.cardinal, styles.cardinalS]}>S</TText>
-          <TText style={[styles.cardinal, styles.cardinalW]}>W</TText>
+          <TText style={[styles.cardinal, styles.cardinalN, { color: theme.colors.onBackground }]}>N</TText>
+          <TText style={[styles.cardinal, styles.cardinalE, { color: theme.colors.onBackground }]}>E</TText>
+          <TText style={[styles.cardinal, styles.cardinalS, { color: theme.colors.onBackground }]}>S</TText>
+          <TText style={[styles.cardinal, styles.cardinalW, { color: theme.colors.onBackground }]}>W</TText>
 
           {/* (Optional) small ticks at 0/90/180/270 */}
-          <View style={[styles.tick, styles.tickTop]} />
-          <View style={[styles.tick, styles.tickRight]} />
-          <View style={[styles.tick, styles.tickBottom]} />
-          <View style={[styles.tick, styles.tickLeft]} />
+          <View style={[styles.tick, styles.tickTop, { backgroundColor: `${theme.colors.outline}99` }]} />
+          <View style={[styles.tick, styles.tickRight, { backgroundColor: `${theme.colors.outline}99` }]} />
+          <View style={[styles.tick, styles.tickBottom, { backgroundColor: `${theme.colors.outline}99` }]} />
+          <View style={[styles.tick, styles.tickLeft, { backgroundColor: `${theme.colors.outline}99` }]} />
         </Animated.View>
         {!!foundCreature && (
           <Image
@@ -202,13 +205,14 @@ export default function Detector() {
         )}
 
         {/* Main circle */}
-        <View style={styles.mainCircle}></View>
+        <View style={[styles.mainCircle, { borderColor: theme.colors.primary }]}></View>
 
         {/* Animated pulse circle */}
         <Animated.View
           style={[
             styles.pulseCircle,
             {
+              borderColor: theme.colors.primary,
               transform: [{ scale: pulseAnim }],
               opacity: pulseAnim.interpolate({
                 inputRange: [0, 0.5, 1],
@@ -219,27 +223,29 @@ export default function Detector() {
         />
       </View>
       {!!!foundCreature && (
-        <TouchableOpacity
+        <Button
           style={styles.button}
+          contentStyle={styles.buttonContent}
+          mode="contained"
           onPress={async () => {
             startPulse();
             await updateCreatureInfo();
           }}
         >
-          <TText style={styles.buttonText}>Detect</TText>
-        </TouchableOpacity>
+          Detect
+        </Button>
       )}
 
       {!!foundCreature && (
-        <TouchableOpacity
-          style={styles.button}
+        <Button
+          mode="outlined"
           onPress={async () => {
             console.log("pressed");
             await startEncounter();
           }}
         >
-          <TText style={styles.buttonText}>Fånga!</TText>
-        </TouchableOpacity>
+          Fånga!
+        </Button>
       )}
       {detectedCreature && (
         <>
@@ -267,7 +273,6 @@ const styles = StyleSheet.create({
     height: 200,
     borderRadius: 100,
     borderWidth: 4,
-    borderColor: "white",
     position: "absolute",
   },
   imageCircle: {
@@ -280,7 +285,6 @@ const styles = StyleSheet.create({
     height: 200,
     borderRadius: 100,
     borderWidth: 2,
-    borderColor: "white",
     position: "absolute",
   },
   /* --- Detection Dot Ring ring --- */
@@ -301,7 +305,6 @@ const styles = StyleSheet.create({
     height: 250, // 220 if you enlarge container
     borderRadius: 125,
     borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.35)",
     justifyContent: "center",
     alignItems: "center",
   },
@@ -311,7 +314,6 @@ const styles = StyleSheet.create({
     width: 10,
     height: 10,
     borderRadius: 5,
-    backgroundColor: "#fff",
   },
 
   /* Cardinal letters positioned on the rim */
@@ -319,7 +321,6 @@ const styles = StyleSheet.create({
     position: "absolute",
     fontSize: 14,
     fontWeight: "700",
-    color: "white",
     textShadowColor: "rgba(0,0,0,0.35)",
     textShadowRadius: 4,
   },
@@ -333,7 +334,6 @@ const styles = StyleSheet.create({
     position: "absolute",
     width: 2,
     height: 10,
-    backgroundColor: "rgba(255,255,255,0.6)",
     borderRadius: 1,
   },
   tickTop: { top: 0, left: "50%", transform: [{ translateX: -1 }] },
@@ -350,15 +350,10 @@ const styles = StyleSheet.create({
   },
 
   button: {
-    backgroundColor: "#007AFF",
-    paddingHorizontal: 30,
-    paddingVertical: 15,
-    borderRadius: 25,
     marginTop: 40,
   },
-  buttonText: {
-    color: "white",
-    fontSize: 18,
-    fontWeight: "bold",
+  buttonContent: {
+    paddingHorizontal: 30,
+    paddingVertical: 15,
   },
 });

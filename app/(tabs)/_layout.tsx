@@ -51,6 +51,16 @@ export default function TabsLayout() {
       />
       {/*//Debug tabs*/}
       <Tabs.Screen
+        name="theme-demo"
+        options={{
+          // href: null, //hides tab - remove this line to show the tab
+          title: "Theme Demo",
+          tabBarIcon: ({ color }) => (
+            <Ionicons name="color-palette" color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="about"
         options={{
           href: null, //hides tab
