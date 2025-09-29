@@ -1,5 +1,6 @@
 import { Tabs } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { useColorScheme } from "react-native";
 import { Colors } from "../../constants/colors";
 import { CatalogProvider, useCatalog } from "../../context/catalog-context";
@@ -25,7 +26,7 @@ export default function TabsLayout() {
         options={{
           title: "Home",
           tabBarIcon: ({ color }) => (
-            <Ionicons name="home-sharp" color={color} />
+            <MaterialCommunityIcons name="home" color={color} size={24} />
           ),
         }}
       />
@@ -36,7 +37,7 @@ export default function TabsLayout() {
           href: catalog ? (catalog.length > 0 ? undefined : null) : null,
           tabBarBadge: "!", // e.g. number of creatures
           tabBarIcon: ({ color }) => (
-            <Ionicons name="home-sharp" color={color} />
+            <MaterialCommunityIcons name="book-open-variant" color={color} size={24} />
           ),
         }}
       />
@@ -45,7 +46,16 @@ export default function TabsLayout() {
         options={{
           title: "Detektor",
           tabBarIcon: ({ color }) => (
-            <Ionicons name="speedometer" color={color} />
+            <MaterialCommunityIcons name="radar" color={color} size={24} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="karta"
+        options={{
+          title: "Karta",
+          tabBarIcon: ({ color }) => (
+            <MaterialCommunityIcons name="map" color={color} size={24} />
           ),
         }}
       />
@@ -56,7 +66,7 @@ export default function TabsLayout() {
           // href: null, //hides tab - remove this line to show the tab
           title: "Theme Demo",
           tabBarIcon: ({ color }) => (
-            <Ionicons name="color-palette" color={color} />
+            <MaterialCommunityIcons name="palette" color={color} size={24} />
           ),
         }}
       />
@@ -72,7 +82,7 @@ export default function TabsLayout() {
         options={{
           href: null, //hides tab
           title: "Location",
-          tabBarIcon: ({ color }) => <Ionicons name="book" color={color} />,
+          tabBarIcon: ({ color }) => <MaterialCommunityIcons name="map-marker" color={color} size={24} />,
         }}
       />
     </Tabs>
