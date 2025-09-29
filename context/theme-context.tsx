@@ -2,6 +2,7 @@ import React, { createContext, useContext, ReactNode } from "react";
 import { useColorScheme } from "react-native";
 import { Colors } from "../constants/colors";
 import { useUser } from "../hooks/use-users";
+import { PaperProvider } from "react-native-paper";
 
 // Type for individual theme (light or dark)
 type Theme = typeof Colors.light;
@@ -26,7 +27,7 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
   const colorScheme = useColorScheme();
   const currentScheme = colorScheme ?? "light";
   const theme = Colors[currentScheme];
-  const {user} = useUser();
+  const { user } = useUser();
 
   const value: ThemeContextType = {
     theme,
@@ -36,19 +37,19 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
   };
 
   return (
-    <ThemeContext.Provider value={value}>
-      {children}
-    </ThemeContext.Provider>
+    <PaperProvider>
+      <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
+    </PaperProvider>
   );
 }
 
 // Custom hook to use the theme
 export function useTheme(): ThemeContextType {
   const context = useContext(ThemeContext);
-  
+
   if (context === undefined) {
     throw new Error("useTheme must be used within a ThemeProvider");
   }
-  
+
   return context;
 }
