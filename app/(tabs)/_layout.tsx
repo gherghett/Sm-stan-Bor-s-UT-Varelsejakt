@@ -1,13 +1,8 @@
 import { Tabs } from "expo-router";
-import Ionicons from "@expo/vector-icons/Ionicons";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import { useColorScheme } from "react-native";
-import { Colors } from "../../constants/colors";
-import { CatalogProvider, useCatalog } from "../../context/catalog-context";
+import { useCatalog } from "../../context/catalog-context";
 
 export default function TabsLayout() {
-  const colorScheme = useColorScheme();
-  const theme = Colors[colorScheme ?? "light"];
   const { catalog } = useCatalog();
 
   return (
