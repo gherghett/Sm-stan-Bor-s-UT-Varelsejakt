@@ -12,10 +12,7 @@ import { Creature, getUserCreatureCatalog } from "../../lib/appwrite";
 import { useUser } from "../../hooks/use-users";
 import type { Result } from "../../lib/result";
 import { useCatalog } from "../../context/catalog-context";
-import TView from "../../components/TView";
-import TText from "../../components/TText";
-import TTitle from "../../components/TTitle";
-import { useTheme } from "react-native-paper";
+import { useTheme, Text as PaperText, Card } from "react-native-paper";
 import { useRouter } from "expo-router";
 
 export default function katalog() {
@@ -24,25 +21,34 @@ export default function katalog() {
   const router = useRouter();
 
   return (
-    <TView style={styles.container}>
+    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+      <PaperText variant="headlineMedium" style={styles.title}>
+        Varelsekatalog
+      </PaperText>
+      
       {loading && (
-        <TView style={styles.messageContainer}>
-          <TText style={styles.messageText}>Loading....</TText>
-        </TView>
+        <View style={styles.messageContainer}>
+          <PaperText style={styles.messageText}>Loading....</PaperText>
+        </View>
       )}
 
       {error && (
-        <TView style={styles.messageContainer}>
-          <TText style={[styles.messageText, { color: "#cc475a" }]}>
+        <View style={styles.messageContainer}>
+          <PaperText style={[styles.messageText, { color: theme.colors.error }]}>
             Error: {error}
-          </TText>
-        </TView>
+          </PaperText>
+        </View>
       )}
 
       {catalog && catalog.length === 0 && (
-        <TView style={styles.messageContainer}>
-          <TText style={styles.messageText}>No creatures found.</TText>
-        </TView>
+        <View style={styles.messageContainer}>
+          <PaperText variant="bodyLarge" style={{ textAlign: 'center', opacity: 0.7 }}>
+            No creatures found yet.
+          </PaperText>
+          <PaperText variant="bodyMedium" style={{ textAlign: 'center', marginTop: 8, opacity: 0.5 }}>
+            Start detecting to build your catalog!
+          </PaperText>
+        </View>
       )}
 
       {catalog && catalog.length > 0 && (
@@ -50,7 +56,7 @@ export default function katalog() {
           style={styles.scrollView}
           showsVerticalScrollIndicator={false}
         >
-          <TView style={styles.grid}>
+          <View style={styles.grid}>
             {catalog.map((creature) => (
               <Pressable
                 key={creature.$id}
@@ -62,7 +68,8 @@ export default function katalog() {
                 style={({ pressed }) => [
                   styles.card,
                   {
-                    backgroundColor: theme.colors.background,
+                    backgroundColor: theme.colors.surface,
+                    borderColor: theme.colors.outline,
                     opacity: pressed ? 0.8 : 1,
                   },
                 ]}
@@ -72,15 +79,15 @@ export default function katalog() {
                   style={styles.creatureImage}
                   resizeMode="cover"
                 />
-                <TView style={styles.cardContent}>
-                  <TText style={styles.creatureName}>{creature.name}</TText>
-                </TView>
+                <View style={styles.cardContent}>
+                  <PaperText style={styles.creatureName}>{creature.name}</PaperText>
+                </View>
               </Pressable>
             ))}
-          </TView>
+          </View>
         </ScrollView>
       )}
-    </TView>
+    </View>
   );
 }
 
@@ -116,6 +123,7 @@ const styles = StyleSheet.create({
     width: "48%",
     marginBottom: 16,
     borderRadius: 12,
+    borderWidth: 1,
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
@@ -129,7 +137,6 @@ const styles = StyleSheet.create({
   creatureImage: {
     width: "100%",
     height: 120,
-    backgroundColor: "#f0f0f0",
   },
   cardContent: {
     padding: 12,

@@ -1,11 +1,10 @@
-import { StyleSheet, Text, View, Image, Button } from "react-native";
+import { StyleSheet, View, Image } from "react-native";
 import React, { useEffect } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { captureCreatureAsync, getImageUrl } from "../lib/appwrite";
-import TText from "../components/TText";
-import TView from "../components/TView";
 import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 import { useCatalog } from "../context/catalog-context";
+import { Button, Text } from "react-native-paper";
 
 type Step =
   | {
@@ -62,7 +61,7 @@ export default function encounter() {
   return (
     <>
       {content.map((block: Step, i: number) => (
-        <TView key={i}>
+        <View key={i}>
           {"image" in block && (
             <Image
               source={{ uri: getImageUrl(block.image) }}
@@ -74,13 +73,15 @@ export default function encounter() {
               }
             />
           )}
-          {"text" in block && <TText>{block.text}</TText>}
-        </TView>
+          {"text" in block && <Text>{block.text}</Text>}
+        </View>
       ))}
       <Button
-        title="Stäng"
+        mode="contained"
         onPress={() => router.dismissTo("/(user-space)/(tabs)/detektor")}
-      />
+      >
+        Stäng
+      </Button>
     </>
   );
 }

@@ -1,13 +1,15 @@
 import React from "react";
-import TView from "../../components/TView";
-import TText from "../../components/TText";
 import TLink from "../../components/TLink";
 import { ThemeToggle } from "../../components/ThemeToggle";
+import { Text, useTheme } from "react-native-paper";
+import { View } from "react-native";
 
 export default function About() {
+  const theme = useTheme();
+  
   return (
-    <TView style={{ flex: 1 }}>
-      <TText>About</TText>
+    <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
+      <Text variant="headlineMedium">About</Text>
       <ThemeToggle />
       <TLink
         style={{ borderBottomWidth: 1, marginVertical: 10 }}
@@ -23,8 +25,6 @@ export default function About() {
       >
         home
       </TLink>
-    </TView>
+    </View>
   );
 }
-
-// ...existing code...

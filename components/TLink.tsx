@@ -1,7 +1,7 @@
 import React from "react";
-import { Text, StyleProp, TextStyle } from "react-native";
-import  {Link} from "expo-router"
-import { useTheme } from "react-native-paper";
+import { StyleProp, TextStyle } from "react-native";
+import { Link } from "expo-router";
+import { Text, useTheme } from "react-native-paper";
 
 export default function TLink({ style, children, onPress, ...props }: React.ComponentProps<typeof Link>) {
   const theme = useTheme();

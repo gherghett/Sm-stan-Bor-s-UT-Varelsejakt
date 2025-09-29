@@ -1,14 +1,12 @@
-import { Button, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import React, { useEffect, useState } from "react";
-import TView from "../../components/TView";
-import TText from "../../components/TText";
-import TTextInput from "../../components/TTextInput";
+import TLink from "../../components/TLink";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Button, Text, TextInput, Card, useTheme } from "react-native-paper";
 
 import { OAuthProvider } from "react-native-appwrite";
-import TLink from "../../components/TLink";
 import { useUser } from "../../hooks/use-users";
 import { useNavigation, useRouter } from "expo-router";
 
@@ -65,68 +63,83 @@ export default function Login() {
   };
 
   //Potatis12345678 password
+  const theme = useTheme();
+  
   return (
-    <TView>
-      {user && authChecked && <TText>You are logged in as {user.email}</TText>}
-      {!authChecked && <TText>Loading...</TText>}
+    <View style={{ padding: 16, backgroundColor: theme.colors.background }}>
+      {user && authChecked && (
+        <Card style={{ marginBottom: 16 }}>
+          <Card.Content>
+            <Text>You are logged in as {user.email}</Text>
+            <Button mode="outlined" onPress={() => logout()} style={{ marginTop: 12 }}>
+              Log Out
+            </Button>
+          </Card.Content>
+        </Card>
+      )}
+      
+      {!authChecked && (
+        <Card>
+          <Card.Content>
+            <Text>Loading...</Text>
+          </Card.Content>
+        </Card>
+      )}
+      
       {!!!user && authChecked && (
-        <View>
-          <TText style={styles.title}>Login</TText>
-          <TTextInput
-            placeholder="Email"
-            autoCapitalize="none"
-            keyboardType="email-address"
-            onChangeText={(text) => setValue("email", text)}
-            style={styles.input}
-          />
-          {errors.email && (
-            <TText style={styles.error}>{errors.email.message}</TText>
-          )}
-          <TTextInput
-            placeholder="Password"
-            secureTextEntry
-            onChangeText={(text) => setValue("password", text)}
-            style={styles.input}
-          />
-          {errors.password && (
-            <TText style={styles.error}>{errors.password.message}</TText>
-          )}
-          <TText style={styles.button} onPress={handleSubmit(onSubmit)}>
-            Login
-          </TText>
-        </View>
-      )}
-      {backEndError && <TText style={styles.error}>{backEndError}</TText>}
-      {!!user && authChecked && (
-        <Button title="Log Out" onPress={() => logout()} />
+        <Card style={{ marginBottom: 16 }}>
+          <Card.Content>
+            <Text variant="headlineMedium" style={styles.title}>Login</Text>
+            
+            <TextInput
+              label="Email"
+              mode="outlined"
+              placeholder="Enter your email"
+              autoCapitalize="none"
+              keyboardType="email-address"
+              onChangeText={(text) => setValue("email", text)}
+              style={styles.input}
+            />
+            {errors.email && (
+              <Text style={styles.error}>{errors.email.message}</Text>
+            )}
+            
+            <TextInput
+              label="Password"
+              mode="outlined"
+              placeholder="Enter your password"
+              secureTextEntry
+              onChangeText={(text) => setValue("password", text)}
+              style={styles.input}
+            />
+            {errors.password && (
+              <Text style={styles.error}>{errors.password.message}</Text>
+            )}
+            
+            <Button 
+              mode="contained" 
+              onPress={handleSubmit(onSubmit)}
+              style={styles.button}
+            >
+              Login
+            </Button>
+            
+            {backEndError && (
+              <Text style={styles.error}>{backEndError}</Text>
+            )}
+          </Card.Content>
+        </Card>
       )}
 
-      <TText>
-        Dont have an account? <TLink href="/signup">register</TLink>
-      </TText>
-
-      {/* <TText
-            disabled bc does not work in expo
-        style={styles.button}
-        onPress={async () => {
-          try {
-            const result = await loginWithOAuth(OAuthProvider.Github);
-            console.log('GitHub OAuth login successful:', result);
-          } catch (error) {
-            console.log('GitHub OAuth login failed:', error);
-          }
-        }}
-      >
-        Login with GitHub
-      </TText> */}
-    </TView>
+      <Text style={{ textAlign: 'center' }}>
+        Don't have an account? <TLink href="/signup">Register</TLink>
+      </Text>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   title: {
-    fontSize: 24,
-    fontWeight: "bold",
     marginBottom: 24,
     textAlign: "center",
   },
@@ -139,12 +152,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   button: {
-    backgroundColor: "#6849a7",
-    color: "#fff",
-    paddingVertical: 12,
-    borderRadius: 8,
-    textAlign: "center",
-    fontWeight: "bold",
     marginTop: 16,
   },
 });

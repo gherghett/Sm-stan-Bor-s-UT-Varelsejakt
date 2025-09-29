@@ -6,10 +6,8 @@ import React from "react";
 import { Button, Card, Text, useTheme } from "react-native-paper";
 
 //themed components
-import TView from "../../components/TView";
 import TLink from "../../components/TLink";
 import { useUser } from "../../hooks/use-users";
-import TText from "../../components/TText";
 import { useCatalog } from "../../context/catalog-context";
 
 export default function HomeScreen() {
@@ -21,7 +19,7 @@ export default function HomeScreen() {
   const showCatalog = !!catalog && (catalog.length > 0 ? true : false);
 
   return (
-    <TView style={{ flex: 1, padding: 16 }}>
+    <View style={{ flex: 1, padding: 16, backgroundColor: theme.colors.background }}>
       <Text
         variant="headlineLarge"
         style={{ marginBottom: 24, textAlign: "center" }}
@@ -35,9 +33,9 @@ export default function HomeScreen() {
             <Text variant="titleMedium" style={{ marginBottom: 8 }}>
               Konto
             </Text>
-            <TText style={{ marginBottom: 16 }}>
+            <Text style={{ marginBottom: 16 }}>
               Inloggad som: {user.email}
-            </TText>
+            </Text>
             <Button mode="outlined" onPress={() => logout()} icon="logout">
               Logga ut
             </Button>
@@ -72,6 +70,6 @@ export default function HomeScreen() {
           )}
         </Card.Content>
       </Card>
-    </TView>
+    </View>
   );
 }

@@ -1,7 +1,4 @@
 import React, { act, useEffect, useRef, useState } from "react";
-import TView from "../../components/TView";
-import TText from "../../components/TText";
-import TLink from "../../components/TLink";
 import {
   View,
   Animated,
@@ -26,7 +23,7 @@ import * as Location from "expo-location";
 import { useCatalog } from "../../context/catalog-context";
 import { useRouter } from "expo-router";
 import { useCompass } from "../../hooks/use-compass";
-import { Button, useTheme } from "react-native-paper";
+import { Button, useTheme, Text } from "react-native-paper";
 
 export interface CreatureFoundwImage extends CreatureFound {
   img: string;
@@ -149,12 +146,12 @@ export default function Detector() {
   // -------------
 
   return (
-    <TView style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+    <View style={{ flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: theme.colors.background }}>
       {/* Compass ring (under everything else) */}
       {!!foundCreature && (
-        <TText>Du har hittat {foundCreature.found_name}!</TText>
+        <Text>Du har hittat {foundCreature.found_name}!</Text>
       )}
-      <TText style={{ fontSize: 30, marginBottom: 40 }}>Detector</TText>
+      <Text style={{ fontSize: 30, marginBottom: 40 }}>Detector</Text>
 
       <View style={styles.circleContainer}>
         {detectedCreature && (
@@ -185,10 +182,10 @@ export default function Detector() {
           ]}
         >
           {/* Cardinal letters */}
-          <TText style={[styles.cardinal, styles.cardinalN, { color: theme.colors.onBackground }]}>N</TText>
-          <TText style={[styles.cardinal, styles.cardinalE, { color: theme.colors.onBackground }]}>E</TText>
-          <TText style={[styles.cardinal, styles.cardinalS, { color: theme.colors.onBackground }]}>S</TText>
-          <TText style={[styles.cardinal, styles.cardinalW, { color: theme.colors.onBackground }]}>W</TText>
+          <Text style={[styles.cardinal, styles.cardinalN, { color: theme.colors.onBackground }]}>N</Text>
+          <Text style={[styles.cardinal, styles.cardinalE, { color: theme.colors.onBackground }]}>E</Text>
+          <Text style={[styles.cardinal, styles.cardinalS, { color: theme.colors.onBackground }]}>S</Text>
+          <Text style={[styles.cardinal, styles.cardinalW, { color: theme.colors.onBackground }]}>W</Text>
 
           {/* (Optional) small ticks at 0/90/180/270 */}
           <View style={[styles.tick, styles.tickTop, { backgroundColor: `${theme.colors.outline}99` }]} />
@@ -249,14 +246,14 @@ export default function Detector() {
       )}
       {detectedCreature && (
         <>
-          <TText>
+          <Text>
             Detektar något i {bearing2svenska(detectedCreature.bearing_deg)}{" "}
             riktning
-          </TText>
-          {distanceText && <TText>~ {distanceText} bort.</TText>}
+          </Text>
+          {distanceText && <Text>~ {distanceText} bort.</Text>}
         </>
       )}
-    </TView>
+    </View>
   );
 }
 
