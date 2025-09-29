@@ -5,12 +5,32 @@
   // },
   "window.autoDetectColorScheme": false,
   "workbench.colorTheme": "Kimbie Dark",
+  "editor.guides.indentation": true,
+  // "editor.guides.highlightActiveIndentation": true,
   "workbench.colorCustomizations": {
     "activityBar.background": "#cd4116",
     "titleBar.activeBackground": "#651346",
     "titleBar.activeForeground": "#FCFAF9",
-    "editor.lineHighlightBackground":"#160d01",
-    "editor.lineHighlightBorder":"#4d320f"
-    
+    "editor.lineHighlightBackground": "#160d01",
+    "editor.lineHighlightBorder": "#4d320f",
+    "editorIndentGuide.activeBackground1": "#c3e4ae", // level 1
+    "editorIndentGuide.activeBackground2": "#c3e4ae", // level 1
+    "editorIndentGuide.activeBackground3": "#c3e4ae", // level 1
+    "editorIndentGuide.background1": "#c7a41b", // level 3
+    "editorIndentGuide.background2": "#cc1692", // level 2
+    "editorIndentGuide.background3": "#10d0d0", // level 1
+  },
+},
+{
+  {
+    {
+      {
+        {
+          {
+            
+          }
+        }
+      }
+    }
   }
 }

@@ -62,19 +62,11 @@ export default function Detector() {
       setDetectionDotRotation(0);
       return;
     }
-
-    const compassHeading = heading?.trueHeading ?? 0;
-    const creatureBearing = detectedCreature.bearing_deg;
-    
-    // Calculate the relative angle: creature bearing minus compass heading
-    // This will rotate the dot to point in the correct direction relative to the compass
-    const relativeBearing = creatureBearing - compassHeading;
-    
+    const relativeBearing = detectedCreature.bearing_deg - (heading?.trueHeading ?? 0);
     setDetectionDotRotation(relativeBearing);
-
   }, [heading?.trueHeading, detectedCreature]);
 
-  //---Animation
+  // --- Animation ---
   const pulseAnim = useRef(new Animated.Value(0)).current;
   // const theme =
   const startPulse = () => {
@@ -88,6 +80,7 @@ export default function Detector() {
       useNativeDriver: true,
     }).start();
   };
+  // --------------------
 
   // --- API communication /game logic
   const updateCreatureInfo = async () => {
