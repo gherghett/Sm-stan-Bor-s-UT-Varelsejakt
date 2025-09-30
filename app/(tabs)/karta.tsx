@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { StyleSheet, View, Image } from "react-native";
 import MapView, {
   Callout,
@@ -8,6 +8,7 @@ import MapView, {
 } from "react-native-maps";
 import { SegmentedButtons, Text, useTheme } from "react-native-paper";
 import { useCatalog } from "../../context/catalog-context";
+import { MyThemeContext } from "../../context/theme-context";
 import { Creature } from "../../lib/appwrite";
 import { useRouter } from "expo-router";
 import { AppTheme } from "../../lib/react-native-paper";
@@ -15,6 +16,78 @@ import { AppTheme } from "../../lib/react-native-paper";
 const creatureMarkerIcon = require("../../assets/creature_marker.png");
 const lookingglassMarkerIcon = require("../../assets/lookingglass_marker.png");
 const plotMarkerIcon = require("../../assets/marker_plot.png");
+
+// Dark map style for Google Maps
+const darkMapStyle = [
+  {
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#212121"
+      }
+    ]
+  },
+  {
+    "elementType": "labels.icon",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#757575"
+      }
+    ]
+  },
+  {
+    "elementType": "labels.text.stroke",
+    "stylers": [
+      {
+        "color": "#212121"
+      }
+    ]
+  },
+  {
+    "featureType": "administrative",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#757575"
+      }
+    ]
+  },
+  {
+    "featureType": "administrative.country",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#9e9e9e"
+      }
+    ]
+  },
+  {
+    "featureType": "road",
+    "elementType": "geometry.fill",
+    "stylers": [
+      {
+        "color": "#2c2c2c"
+      }
+    ]
+  },
+  {
+    "featureType": "water",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#000000"
+      }
+    ]
+  }
+];
 
 function creature2Marker(c: Creature) {
   return {
@@ -41,6 +114,7 @@ export default function App() {
   const router = useRouter();
   const mapRef = useRef<MapView>(null);
   const { clues, catalog } = useCatalog();
+  const { isDarkmode } = useContext(MyThemeContext);
   const [filterType, setFilterType] = useState<string>("all");
 
   const cluesMarkers = clues?.map(clue2Marker) ?? null;
@@ -111,6 +185,7 @@ export default function App() {
         showsUserLocation
         showsMyLocationButton
         minZoomLevel={12}
+        customMapStyle={isDarkmode ? darkMapStyle : []}
       >
         {!!getFilteredCreatureMarkers() &&
           getFilteredCreatureMarkers()!.map((m) => (
@@ -147,7 +222,7 @@ export default function App() {
       <View style={styles.filterControlsContainer}>
         <Text>{filterTypeTitle(filterType)}</Text>
         <SegmentedButtons
-        style={[styles.segmentedButtonsContainer, {backgroundColor: theme.colors.background}]}
+        style={[styles.segmentedButtonsContainer, {backgroundColor:theme.colors.background}]}
           value={filterType}
           onValueChange={setFilterType}
           buttons={[
