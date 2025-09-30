@@ -4,7 +4,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { captureCreatureAsync, getImageUrl } from "../lib/appwrite";
 import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 import { useCatalog } from "../context/catalog-context";
-import { Button, Text } from "react-native-paper";
+import { Button, Text, useTheme } from "react-native-paper";
+import { AppTheme } from "../lib/react-native-paper";
 
 type Step =
   | {
@@ -25,6 +26,7 @@ export default function encounter() {
   const { currentEncounter, catalog } = useCatalog();
   const router = useRouter();
   const navigation = useNavigation();
+  const theme = useTheme() as AppTheme;
 
   // Determine encounter data based on the path
   const encounterData =
@@ -59,7 +61,10 @@ export default function encounter() {
   // }
 
   return (
-    <>
+    <SafeAreaView style={theme.styles.container}>
+      <Text variant="headlineMedium" style={theme.styles.title}>
+        {encounterData.title}
+      </Text>
       {content.map((block: Step, i: number) => (
         <View key={i}>
           {"image" in block && (
@@ -77,12 +82,13 @@ export default function encounter() {
         </View>
       ))}
       <Button
+        style={{ marginTop: 16 }}
         mode="contained"
-        onPress={() => router.dismissTo("/(user-space)/(tabs)/detektor")}
+        onPress={() => router.dismissTo("/(tabs)/katalog")}
       >
         Stäng
       </Button>
-    </>
+    </SafeAreaView>
   );
 }
 

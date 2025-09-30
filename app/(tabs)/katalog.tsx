@@ -14,10 +14,11 @@ import type { Result } from "../../lib/result";
 import { useCatalog } from "../../context/catalog-context";
 import { useTheme, Text as PaperText, Card, SegmentedButtons } from "react-native-paper";
 import { useRouter, useFocusEffect } from "expo-router";
+import type { AppTheme } from "../../lib/react-native-paper";
 
 export default function katalog() {
   const { catalog, loading, error, currentEncounter, markCatalogAsViewed } = useCatalog();
-  const theme = useTheme();
+  const theme = useTheme() as AppTheme;
   const router = useRouter();
   const [filterType, setFilterType] = useState('all');
 
@@ -35,7 +36,7 @@ export default function katalog() {
   }) : [];
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+    <View style={[theme.styles.container, { backgroundColor: theme.colors.background }]}>
       {/* <PaperText variant="headlineMedium" style={styles.title}>
         Varelsekatalog
       </PaperText> */}
@@ -126,15 +127,15 @@ export default function katalog() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 16,
-  },
-  title: {
-    textAlign: "center",
-    marginBottom: 20,
-    fontWeight: "bold",
-  },
+  // container: {
+  //   flex: 1,
+  //   padding: 16,
+  // },
+  // title: {
+  //   textAlign: "center",
+  //   marginBottom: 20,
+  //   fontWeight: "bold",
+  // },
   segmentedButtons: {
     marginBottom: 20,
   },

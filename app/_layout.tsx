@@ -35,14 +35,14 @@ export default function RootLayout() {
       <>
         <StatusBar />
         <Stack
-          screenOptions={{
-            headerStyle: { backgroundColor: "#f00" },
-            headerTintColor: "#333",
-          }}
+          // screenOptions={{
+          //   headerStyle: { backgroundColor: "#f00" },
+          //   headerTintColor: "#333",
+          // }}
         >
           <Stack.Protected guard={loggedIn}>
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen name="encounter" options={{ headerShown: true, presentation: "modal" }} />
+            <Stack.Screen name="encounter" options={{ headerShown: false, presentation: "modal" }} />
           </Stack.Protected>
           <Stack.Protected guard={loggedOut}>
             <Stack.Screen

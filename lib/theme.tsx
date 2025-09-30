@@ -13,8 +13,9 @@ import {
   MD3LightTheme,
   MD3Theme,
 } from "react-native-paper";
+import { AppTheme } from "./react-native-paper";
 
-type CombinedTheme = NavigationTheme & MD3Theme;
+type CombinedTheme = NavigationTheme & MD3Theme & AppTheme;
 
 // Adapt navigation themes to work with Paper (required for compatibility)
 const { LightTheme, DarkTheme } = adaptNavigationTheme({
@@ -23,8 +24,8 @@ const { LightTheme, DarkTheme } = adaptNavigationTheme({
 });
 
 // Base combined themes
-export const combinedDarkTheme: CombinedTheme = deepmerge(DarkTheme, MD3DarkTheme);
-export const combinedDefaultTheme: CombinedTheme = deepmerge(LightTheme, MD3LightTheme);
+const combinedDarkTheme = deepmerge(DarkTheme, MD3DarkTheme);
+const combinedDefaultTheme = deepmerge(LightTheme, MD3LightTheme);
 
 // Your custom light theme
 const customLightColors = {
@@ -33,22 +34,22 @@ const customLightColors = {
     onPrimary: "rgb(255, 255, 255)",
     primaryContainer: "rgb(240, 219, 255)",
     onPrimaryContainer: "rgb(44, 0, 81)",
-    
+
     secondary: "rgb(102, 90, 111)",
     onSecondary: "rgb(255, 255, 255)",
     secondaryContainer: "rgb(237, 221, 246)",
     onSecondaryContainer: "rgb(33, 24, 42)",
-    
+
     tertiary: "rgb(128, 81, 88)",
     onTertiary: "rgb(255, 255, 255)",
     tertiaryContainer: "rgb(255, 217, 221)",
     onTertiaryContainer: "rgb(50, 16, 23)",
-    
+
     error: "rgb(186, 26, 26)",
     onError: "rgb(255, 255, 255)",
     errorContainer: "rgb(255, 218, 214)",
     onErrorContainer: "rgb(65, 0, 2)",
-    
+
     background: "rgb(255, 251, 255)",
     onBackground: "rgb(29, 27, 30)",
     surface: "rgb(255, 251, 255)",
@@ -91,22 +92,22 @@ const customDarkColors = {
     onPrimary: "rgb(71, 12, 122)",
     primaryContainer: "rgb(95, 43, 146)",
     onPrimaryContainer: "rgb(240, 219, 255)",
-    
+
     secondary: "rgb(208, 193, 218)",
     onSecondary: "rgb(54, 44, 63)",
     secondaryContainer: "rgb(77, 67, 87)",
     onSecondaryContainer: "rgb(237, 221, 246)",
-    
+
     tertiary: "rgb(243, 183, 190)",
     onTertiary: "rgb(75, 37, 43)",
     tertiaryContainer: "rgb(101, 58, 65)",
     onTertiaryContainer: "rgb(255, 217, 221)",
-    
+
     error: "rgb(255, 180, 171)",
     onError: "rgb(105, 0, 5)",
     errorContainer: "rgb(147, 0, 10)",
     onErrorContainer: "rgb(255, 180, 171)",
-    
+
     background: "rgb(29, 27, 30)",
     onBackground: "rgb(231, 225, 229)",
     surface: "rgb(29, 27, 30)",
@@ -142,13 +143,28 @@ const customDarkColors = {
   },
 } as const;
 
+// Custom properties on theme
+const customThemeProperties = {
+  styles: {
+    container: {
+      flex: 1,
+      padding: 16,
+    },
+    title: {
+      textAlign: "center",
+      marginBottom: 20,
+      fontWeight: "bold",
+    },
+  },
+};
+
 // Final app themes combining base themes with custom colors
 export const appThemeLight: CombinedTheme = deepmerge(
-  combinedDefaultTheme,
-  customLightColors
+  deepmerge(combinedDefaultTheme, customLightColors),
+  customThemeProperties
 );
 
 export const appThemeDark: CombinedTheme = deepmerge(
-  combinedDarkTheme, 
-  customDarkColors
+  deepmerge(combinedDarkTheme, customDarkColors),
+  customThemeProperties
 );
