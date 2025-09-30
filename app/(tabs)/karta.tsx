@@ -12,82 +12,15 @@ import { MyThemeContext } from "../../context/theme-context";
 import { Creature } from "../../lib/appwrite";
 import { useRouter } from "expo-router";
 import { AppTheme } from "../../lib/react-native-paper";
+import { createMapStyle } from "../../lib/map-theme";
 
-const creatureMarkerIcon = require("../../assets/creature_marker.png");
-const lookingglassMarkerIcon = require("../../assets/lookingglass_marker.png");
-const plotMarkerIcon = require("../../assets/marker_plot.png");
+const creatureMarkerIconLight = require("../../assets/creature_marker.png");
+const lookingglassMarkerIconLight = require("../../assets/lookingglass_marker.png");
+const plotMarkerIconLight = require("../../assets/marker_plot.png");
 
-// Dark map style for Google Maps
-const darkMapStyle = [
-  {
-    "elementType": "geometry",
-    "stylers": [
-      {
-        "color": "#212121"
-      }
-    ]
-  },
-  {
-    "elementType": "labels.icon",
-    "stylers": [
-      {
-        "visibility": "off"
-      }
-    ]
-  },
-  {
-    "elementType": "labels.text.fill",
-    "stylers": [
-      {
-        "color": "#757575"
-      }
-    ]
-  },
-  {
-    "elementType": "labels.text.stroke",
-    "stylers": [
-      {
-        "color": "#212121"
-      }
-    ]
-  },
-  {
-    "featureType": "administrative",
-    "elementType": "geometry",
-    "stylers": [
-      {
-        "color": "#757575"
-      }
-    ]
-  },
-  {
-    "featureType": "administrative.country",
-    "elementType": "labels.text.fill",
-    "stylers": [
-      {
-        "color": "#9e9e9e"
-      }
-    ]
-  },
-  {
-    "featureType": "road",
-    "elementType": "geometry.fill",
-    "stylers": [
-      {
-        "color": "#2c2c2c"
-      }
-    ]
-  },
-  {
-    "featureType": "water",
-    "elementType": "geometry",
-    "stylers": [
-      {
-        "color": "#000000"
-      }
-    ]
-  }
-];
+const creatureMarkerIconDark = require("../../assets/creature_marker_dark.png");
+const lookingglassMarkerIconDark = require("../../assets/lookingglass_marker_dark.png");
+const plotMarkerIconDark = require("../../assets/marker_plot_dark.png");
 
 function creature2Marker(c: Creature) {
   return {
@@ -109,7 +42,7 @@ function clue2Marker(c: Creature) {
   };
 }
 
-export default function App() {
+export default function Karta() {
   const theme = useTheme() as AppTheme;
   const router = useRouter();
   const mapRef = useRef<MapView>(null);
@@ -119,6 +52,14 @@ export default function App() {
 
   const cluesMarkers = clues?.map(clue2Marker) ?? null;
   const creatureMarkers = catalog?.map(creature2Marker) ?? null;
+
+  const creatureMarkerIcon = isDarkmode
+    ? creatureMarkerIconDark
+    : creatureMarkerIconLight;
+  const lookingglassMarkerIcon = isDarkmode
+    ? lookingglassMarkerIconDark
+    : lookingglassMarkerIconLight;
+  const plotMarkerIcon = isDarkmode ? plotMarkerIconDark : plotMarkerIconLight;
 
   const filterTypeTitle = (filter: string) => {
     switch (filter) {
@@ -185,7 +126,7 @@ export default function App() {
         showsUserLocation
         showsMyLocationButton
         minZoomLevel={12}
-        customMapStyle={isDarkmode ? darkMapStyle : []}
+        customMapStyle={createMapStyle(theme, isDarkmode)}
       >
         {!!getFilteredCreatureMarkers() &&
           getFilteredCreatureMarkers()!.map((m) => (
@@ -194,7 +135,7 @@ export default function App() {
               coordinate={m.coordinate}
               title={m.title}
               // description={m.description}
-              image={m.type !== "plot" ? creatureMarkerIcon : undefined}
+              image={m.type !== "plot" ? creatureMarkerIcon : plotMarkerIcon}
               onCalloutPress={() => {
                 console.log("Creature pressed:", m.title);
                 router.push(`/encounter?id=${m.id}`);
@@ -222,7 +163,10 @@ export default function App() {
       <View style={styles.filterControlsContainer}>
         <Text>{filterTypeTitle(filterType)}</Text>
         <SegmentedButtons
-        style={[styles.segmentedButtonsContainer, {backgroundColor:theme.colors.background}]}
+          style={[
+            styles.segmentedButtonsContainer,
+            { backgroundColor: theme.colors.background },
+          ]}
           value={filterType}
           onValueChange={setFilterType}
           buttons={[
@@ -263,7 +207,7 @@ const styles = StyleSheet.create({
     padding: 4,
     zIndex: 1000,
   },
-  segmentedButtonsContainer : {
+  segmentedButtonsContainer: {
     borderRadius: 50,
-  }
+  },
 });
