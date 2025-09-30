@@ -1,4 +1,4 @@
-import { StyleSheet, View, Image } from "react-native";
+import { StyleSheet, View, Image, ScrollView } from "react-native";
 import React, { useEffect } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { captureCreatureAsync, getImageUrl } from "../lib/appwrite";
@@ -62,32 +62,34 @@ export default function encounter() {
 
   return (
     <SafeAreaView style={theme.styles.container}>
-      <Text variant="headlineMedium" style={theme.styles.title}>
-        {encounterData.title}
-      </Text>
-      {content.map((block: Step, i: number) => (
-        <View key={i}>
-          {"image" in block && (
-            <Image
-              source={{ uri: getImageUrl(block.image) }}
-              style={styles.image}
-              resizeMode="contain"
-              onLoad={() => console.log("Image loaded successfully")}
-              onError={(error) =>
-                console.log("Image load error:", error.nativeEvent.error)
-              }
-            />
-          )}
-          {"text" in block && <Text>{block.text}</Text>}
-        </View>
-      ))}
-      <Button
-        style={{ marginTop: 16 }}
-        mode="contained"
-        onPress={() => router.dismissTo("/(tabs)/katalog")}
-      >
-        Stäng
-      </Button>
+      <ScrollView>
+        <Text variant="headlineMedium" style={theme.styles.title}>
+          {encounterData.title}
+        </Text>
+        {content.map((block: Step, i: number) => (
+          <View key={i}>
+            {"image" in block && (
+              <Image
+                source={{ uri: getImageUrl(block.image) }}
+                style={styles.image}
+                resizeMode="contain"
+                onLoad={() => console.log("Image loaded successfully")}
+                onError={(error) =>
+                  console.log("Image load error:", error.nativeEvent.error)
+                }
+              />
+            )}
+            {"text" in block && <Text>{block.text}</Text>}
+          </View>
+        ))}
+        <Button
+          style={{ marginTop: 16 }}
+          mode="contained"
+          onPress={() => router.dismissTo("/(tabs)/katalog")}
+        >
+          Stäng
+        </Button>
+      </ScrollView>
     </SafeAreaView>
   );
 }
