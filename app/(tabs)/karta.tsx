@@ -1,17 +1,20 @@
-import React, { useEffect, useRef } from "react";
-import { StyleSheet, View } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import { StyleSheet, View, Image } from "react-native";
 import MapView, {
   Callout,
   Marker,
   PROVIDER_GOOGLE,
   Region,
 } from "react-native-maps";
+import { SegmentedButtons, Text, useTheme } from "react-native-paper";
 import { useCatalog } from "../../context/catalog-context";
 import { Creature } from "../../lib/appwrite";
 import { useRouter } from "expo-router";
+import { AppTheme } from "../../lib/react-native-paper";
 
 const creatureMarkerIcon = require("../../assets/creature_marker.png");
 const lookingglassMarkerIcon = require("../../assets/lookingglass_marker.png");
+const plotMarkerIcon = require("../../assets/marker_plot.png");
 
 function creature2Marker(c: Creature) {
   return {
@@ -34,11 +37,51 @@ function clue2Marker(c: Creature) {
 }
 
 export default function App() {
+  const theme = useTheme() as AppTheme;
   const router = useRouter();
   const mapRef = useRef<MapView>(null);
   const { clues, catalog } = useCatalog();
+  const [filterType, setFilterType] = useState<string>("all");
+
   const cluesMarkers = clues?.map(clue2Marker) ?? null;
   const creatureMarkers = catalog?.map(creature2Marker) ?? null;
+
+  const filterTypeTitle = (filter: string) => {
+    switch (filter) {
+      case "all":
+        return "";
+      case "plot":
+        return "Möten";
+      case "creature":
+        return "Varelser";
+      case "clues":
+        return "Ledtrådar";
+      default:
+        return "";
+    }
+  };
+
+  // Filter markers based on selected type
+  const getFilteredCreatureMarkers = () => {
+    if (!creatureMarkers) return null;
+
+    switch (filterType) {
+      case "plot":
+        return creatureMarkers.filter((m) => m.type === "plot");
+      case "creature":
+        return creatureMarkers.filter((m) => m.type === "creature");
+      case "clues":
+        return null; // Don't show creature markers when showing clues
+      default:
+        return creatureMarkers;
+    }
+  };
+
+  const getFilteredClueMarkers = () => {
+    if (filterType === "clues") return cluesMarkers;
+    if (filterType === "all") return cluesMarkers;
+    return null; // Don't show clues when filtering for specific creature types
+  };
 
   // Optional initial region (center of the markers)
   const initialRegion: Region = {
@@ -69,8 +112,8 @@ export default function App() {
         showsMyLocationButton
         minZoomLevel={12}
       >
-        {!!creatureMarkers &&
-          creatureMarkers.map((m) => (
+        {!!getFilteredCreatureMarkers() &&
+          getFilteredCreatureMarkers()!.map((m) => (
             <Marker
               key={m.id}
               coordinate={m.coordinate}
@@ -83,8 +126,8 @@ export default function App() {
               }}
             />
           ))}
-        {!!cluesMarkers &&
-          cluesMarkers.map((m) => (
+        {!!getFilteredClueMarkers() &&
+          getFilteredClueMarkers()!.map((m) => (
             <Marker
               key={m.id}
               coordinate={m.coordinate}
@@ -100,6 +143,36 @@ export default function App() {
             </Marker>
           ))}
       </MapView>
+
+      <View style={styles.filterControlsContainer}>
+        <Text>{filterTypeTitle(filterType)}</Text>
+        <SegmentedButtons
+        style={[styles.segmentedButtonsContainer, {backgroundColor: theme.colors.background}]}
+          value={filterType}
+          onValueChange={setFilterType}
+          buttons={[
+            {
+              value: "all",
+              label: "Alla",
+            },
+            {
+              value: "clues",
+              icon: "magnify",
+              label: "",
+            },
+            {
+              value: "plot",
+              icon: "map-marker",
+              label: "",
+            },
+            {
+              value: "creature",
+              icon: "koala",
+              label: "",
+            },
+          ]}
+        />
+      </View>
     </View>
   );
 }
@@ -107,4 +180,15 @@ export default function App() {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   map: { width: "100%", height: "100%" },
+  filterControlsContainer: {
+    position: "absolute",
+    bottom: 30,
+    left: 16,
+    right: 16,
+    padding: 4,
+    zIndex: 1000,
+  },
+  segmentedButtonsContainer : {
+    borderRadius: 50,
+  }
 });
