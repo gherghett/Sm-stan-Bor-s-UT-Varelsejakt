@@ -22,9 +22,9 @@ interface CatalogContextValue {
   reloadCatalog: () => Promise<void>;
   currentEncounter: CreatureFoundwImage;
   setCurrentEncounter: Function;
-  newCreaturesCount: number;
-  markCatalogAsViewed: () => void;
-  hasNewCreatures: boolean;
+  // newCreaturesCount: number;
+  // markCatalogAsViewed: () => void;
+  // hasNewCreatures: boolean;
 }
 
 const CatalogContext = createContext<CatalogContextValue | undefined>(
@@ -51,25 +51,25 @@ function CatalogProvider({ children }: CatalogProviderProps) {
   const [error, setError] = useState<string | null>(null);
   const [currentEncounter, setCurrentEncounter] = useState<any>(null);
   
-  // "New" creatures tracking
-  const [lastViewedCatalogIds, setLastViewedCatalogIds] = useState<Set<string>>(new Set());
-  const [catalogViewedAt, setCatalogViewedAt] = useState<number | null>(null);
+  // // "New" creatures tracking
+  // const [lastViewedCatalogIds, setLastViewedCatalogIds] = useState<Set<string>>(new Set());
+  // const [catalogViewedAt, setCatalogViewedAt] = useState<number | null>(null);
 
-  // Calculate new creatures count
-  const newCreaturesCount = catalog 
-    ? catalog.filter(creature => !lastViewedCatalogIds.has(creature.$id)).length 
-    : 0;
+  // // Calculate new creatures count
+  // const newCreaturesCount = catalog 
+  //   ? catalog.filter(creature => !lastViewedCatalogIds.has(creature.$id)).length 
+  //   : 0;
     
-  const hasNewCreatures = newCreaturesCount > 0;
+  // const hasNewCreatures = newCreaturesCount > 0;
 
-  // Mark catalog as viewed - resets new creatures counter
-  const markCatalogAsViewed = () => {
-    if (catalog) {
-      const currentIds = new Set(catalog.map(c => c.$id));
-      setLastViewedCatalogIds(currentIds);
-      setCatalogViewedAt(Date.now());
-    }
-  };
+  // // Mark catalog as viewed - resets new creatures counter
+  // const markCatalogAsViewed = () => {
+  //   if (catalog) {
+  //     const currentIds = new Set(catalog.map(c => c.$id));
+  //     setLastViewedCatalogIds(currentIds);
+  //     setCatalogViewedAt(Date.now());
+  //   }
+  // };
 
   const loadCatalog = async (u: AppwriteUser) => {
     setLoading(true);
@@ -84,10 +84,10 @@ function CatalogProvider({ children }: CatalogProviderProps) {
         setClues(newClues);
         
         // Initialize viewed state if this is the first load and we have no tracked IDs
-        if (lastViewedCatalogIds.size === 0 && newCatalog.length > 0) {
-          // On first load, don't mark as new - assume user has seen existing creatures
-          setLastViewedCatalogIds(new Set(newCatalog.map(c => c.$id)));
-        }
+        // if (lastViewedCatalogIds.size === 0 && newCatalog.length > 0) {
+        //   // On first load, don't mark as new - assume user has seen existing creatures
+        //   setLastViewedCatalogIds(new Set(newCatalog.map(c => c.$id)));
+        // }
       } else {
         setError("Failed to load catalog");
         setCatalog(null);
@@ -122,16 +122,14 @@ function CatalogProvider({ children }: CatalogProviderProps) {
         reloadCatalog: () => (user ? loadCatalog(user) : Promise.resolve()),
         currentEncounter,
         setCurrentEncounter,
-        newCreaturesCount,
-        markCatalogAsViewed,
-        hasNewCreatures,
+        // newCreaturesCount,
+        // markCatalogAsViewed,
+        // hasNewCreatures,
       }}
     >
       {children}
     </CatalogContext.Provider>
   );
 }
-
-// ...existing code...
 
 export { CatalogProvider };

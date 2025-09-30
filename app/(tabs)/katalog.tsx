@@ -17,17 +17,17 @@ import { useRouter, useFocusEffect } from "expo-router";
 import type { AppTheme } from "../../lib/react-native-paper";
 
 export default function katalog() {
-  const { catalog, loading, error, currentEncounter, markCatalogAsViewed } = useCatalog();
+  const { catalog, loading, error, currentEncounter } = useCatalog();
   const theme = useTheme() as AppTheme;
   const router = useRouter();
   const [filterType, setFilterType] = useState('all');
 
-  // Mark catalog as viewed when screen is focused
-  useFocusEffect(
-    React.useCallback(() => {
-      markCatalogAsViewed();
-    }, [markCatalogAsViewed])
-  );
+  // // Mark catalog as viewed when screen is focused
+  // useFocusEffect(
+  //   React.useCallback(() => {
+  //     markCatalogAsViewed();
+  //   }, [markCatalogAsViewed])
+  // );
 
   // Filter catalog based on selected type
   const filteredCatalog = catalog ? catalog.filter(item => {
