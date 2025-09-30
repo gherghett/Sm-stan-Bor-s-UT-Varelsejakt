@@ -94,8 +94,8 @@ export default function encounter() {
 
 const styles = StyleSheet.create({
   image: {
-    width: 300,
-    height: 200,
+    width: "100%",
+    aspectRatio: 1, // This will maintain aspect ratio - adjust as needed
     alignSelf: "center",
     marginVertical: 10,
   },
