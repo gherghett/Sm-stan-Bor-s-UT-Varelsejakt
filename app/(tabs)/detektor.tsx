@@ -36,6 +36,7 @@ export default function Detector() {
     useState<null | CreatureDetected>(null);
   const [distanceText, setDistanceText] = useState<null | string>(null);
   const router = useRouter();
+  const [isDetecting, setIsDetecting] = useState(false);
 
   useEffect(() => {
     if (!!!detectedCreature) {
@@ -68,17 +69,26 @@ export default function Detector() {
 
   // --- Animation ---
   const pulseAnim = useRef(new Animated.Value(0)).current;
-  // const theme =
+  
   const startPulse = () => {
     // Reset animation
     pulseAnim.setValue(0);
 
-    // Animate from center (scale 0) to full size (scale 1) and fade out
-    Animated.timing(pulseAnim, {
-      toValue: 1,
-      duration: 800,
-      useNativeDriver: true,
-    }).start();
+    // Create a continuous pulse while detecting
+    const createPulse = () => {
+      Animated.timing(pulseAnim, {
+        toValue: 1,
+        duration: 800,
+        useNativeDriver: true,
+      }).start(() => {
+        if (isDetecting) {
+          pulseAnim.setValue(0);
+          createPulse(); // Continue pulsing while detecting
+        }
+      });
+    };
+    
+    createPulse();
   };
   // --------------------
 
@@ -272,7 +282,7 @@ export default function Detector() {
         {/* Main circle */}
         <View
           style={[styles.mainCircle, { borderColor: theme.colors.primary }]}
-        ></View>
+        />
 
         {/* Animated pulse circle */}
         <Animated.View
@@ -294,9 +304,16 @@ export default function Detector() {
           style={styles.button}
           contentStyle={styles.buttonContent}
           mode="contained"
+          loading={isDetecting}
+          disabled={isDetecting}
           onPress={async () => {
+            setIsDetecting(true);
             startPulse();
-            await updateCreatureInfo();
+            try {
+              await updateCreatureInfo();
+            } finally {
+              setIsDetecting(false);
+            }
           }}
         >
           Detect
@@ -341,6 +358,7 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     borderWidth: 4,
     position: "absolute",
+    // backgroundColor: "#ffffff"
   },
   imageCircle: {
     width: 200,
