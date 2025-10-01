@@ -6,21 +6,39 @@ import {
   Image,
   Dimensions,
   Pressable,
+  RefreshControl,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { Creature, getUserCreatureCatalog } from "../../lib/appwrite";
 import { useUser } from "../../hooks/use-users";
 import type { Result } from "../../lib/result";
 import { useCatalog } from "../../context/catalog-context";
-import { useTheme, Text as PaperText, Card, SegmentedButtons } from "react-native-paper";
+import {
+  useTheme,
+  Text as PaperText,
+  Card,
+  SegmentedButtons,
+} from "react-native-paper";
 import { useRouter, useFocusEffect } from "expo-router";
 import type { AppTheme } from "../../lib/react-native-paper";
 
 export default function katalog() {
-  const { catalog, loading, error, currentEncounter } = useCatalog();
+  const { catalog, loading, error, currentEncounter, reloadCatalog } =
+    useCatalog();
   const theme = useTheme() as AppTheme;
   const router = useRouter();
-  const [filterType, setFilterType] = useState('all');
+  const [filterType, setFilterType] = useState("all");
+  const [refreshing, setRefreshing] = useState(false);
+
+  // Handle pull-to-refresh
+  const onRefresh = React.useCallback(async () => {
+    setRefreshing(true);
+    try {
+      await reloadCatalog();
+    } finally {
+      setRefreshing(false);
+    }
+  }, [reloadCatalog]);
 
   // // Mark catalog as viewed when screen is focused
   // useFocusEffect(
@@ -30,66 +48,58 @@ export default function katalog() {
   // );
 
   // Filter catalog based on selected type
-  const filteredCatalog = catalog ? catalog.filter(item => {
-    if (filterType === 'all') return true;
-    return item.type === filterType;
-  }) : [];
+  const filteredCatalog = catalog
+    ? catalog.filter((item) => {
+        if (filterType === "all") return true;
+        return item.type === filterType;
+      })
+    : [];
 
   return (
-    <View style={[theme.styles.container, { backgroundColor: theme.colors.background }]}>
+    <View
+      style={[
+        theme.styles.container,
+        { backgroundColor: theme.colors.background },
+      ]}
+    >
       {/* <PaperText variant="headlineMedium" style={styles.title}>
         Varelsekatalog
       </PaperText> */}
-      
-      <SegmentedButtons
-        value={filterType}
-        onValueChange={setFilterType}
-        buttons={[
-          {
-            value: 'all',
-            label: 'Allt',
-          },
-          {
-            value: 'creature',
-            label: 'Varelser',
-          },
-          {
-            value: 'plot',
-            label: 'Möten',
-          },
-        ]}
-        style={styles.segmentedButtons}
-      />
-      
-      {loading && (
-        <View style={styles.messageContainer}>
-          <PaperText style={styles.messageText}>Loading....</PaperText>
-        </View>
-      )}
 
       {error && (
         <View style={styles.messageContainer}>
-          <PaperText style={[styles.messageText, { color: theme.colors.error }]}>
+          <PaperText
+            style={[styles.messageText, { color: theme.colors.error }]}
+          >
             Error: {error}
           </PaperText>
         </View>
       )}
 
-      {catalog && filteredCatalog.length === 0 && filterType === 'all' && (
+      {catalog && filteredCatalog.length === 0 && filterType === "all" && (
         <View style={styles.messageContainer}>
-          <PaperText variant="bodyLarge" style={{ textAlign: 'center', opacity: 0.7 }}>
+          <PaperText
+            variant="bodyLarge"
+            style={{ textAlign: "center", opacity: 0.7 }}
+          >
             No creatures found yet.
           </PaperText>
-          <PaperText variant="bodyMedium" style={{ textAlign: 'center', marginTop: 8, opacity: 0.5 }}>
+          <PaperText
+            variant="bodyMedium"
+            style={{ textAlign: "center", marginTop: 8, opacity: 0.5 }}
+          >
             Start detecting to build your catalog!
           </PaperText>
         </View>
       )}
 
-      {catalog && filteredCatalog.length === 0 && filterType !== 'all' && (
+      {catalog && filteredCatalog.length === 0 && filterType !== "all" && (
         <View style={styles.messageContainer}>
-          <PaperText variant="bodyLarge" style={{ textAlign: 'center', opacity: 0.7 }}>
-            No {filterType === 'creature' ? 'varelser' : 'möten'} found yet.
+          <PaperText
+            variant="bodyLarge"
+            style={{ textAlign: "center", opacity: 0.7 }}
+          >
+            No {filterType === "creature" ? "varelser" : "möten"} found yet.
           </PaperText>
         </View>
       )}
@@ -98,7 +108,39 @@ export default function katalog() {
         <ScrollView
           style={styles.scrollView}
           showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              tintColor={theme.colors.primary}
+              colors={[theme.colors.primary]}
+            />
+          }
         >
+          <SegmentedButtons
+            value={filterType}
+            onValueChange={setFilterType}
+            buttons={[
+              {
+                value: "all",
+                label: "Allt",
+              },
+              {
+                value: "creature",
+                label: "Varelser",
+              },
+              {
+                value: "plot",
+                label: "Möten",
+              },
+            ]}
+            style={styles.segmentedButtons}
+          />
+          {loading && (
+            <View style={styles.messageContainer}>
+              <PaperText style={styles.messageText}>Loading....</PaperText>
+            </View>
+          )}
           <View style={styles.grid}>
             {filteredCatalog.map((creature) => (
               <Card
@@ -115,7 +157,9 @@ export default function katalog() {
                   style={styles.creatureImage}
                 />
                 <Card.Content style={styles.cardContent}>
-                  <PaperText style={styles.creatureName}>{creature.name}</PaperText>
+                  <PaperText style={styles.creatureName}>
+                    {creature.name}
+                  </PaperText>
                 </Card.Content>
               </Card>
             ))}
@@ -143,6 +187,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    marginBottom:16
   },
   messageText: {
     fontSize: 16,
