@@ -52,8 +52,10 @@ function CatalogProvider({ children }: CatalogProviderProps) {
   const [error, setError] = useState<string | null>(null);
   const [currentEncounter, setCurrentEncounter] = useState<any>(null);
   
-  const viskanIsRed = !!catalog && !!catalog.find(c => c.$id == "68dbd470eeb126340e4c");
-  
+  const viskanIsRed = !!catalog && !!catalog.find(c => c.$id == "68dbd470eeb126340e4c") && !catalog.find(c => c.$id == "68dcf572be369cd78383");
+  //68dcf572be369cd78383
+
+
   // // "New" creatures tracking
   // const [lastViewedCatalogIds, setLastViewedCatalogIds] = useState<Set<string>>(new Set());
   // const [catalogViewedAt, setCatalogViewedAt] = useState<number | null>(null);
