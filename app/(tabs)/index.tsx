@@ -20,7 +20,7 @@ export default function HomeScreen() {
   const showCatalog = !!catalog && (catalog.length > 0 ? true : false);
 
   return (
-    <View style={theme.styles.container}>
+    <SafeAreaView style={theme.styles.container}>
       <Text
         variant="headlineLarge"
         style={theme.styles.title}
@@ -67,6 +67,6 @@ export default function HomeScreen() {
           )}
         </Card.Content>
       </Card>
-    </View>
+    </SafeAreaView>
   );
 }

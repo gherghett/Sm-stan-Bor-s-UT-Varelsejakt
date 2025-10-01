@@ -22,6 +22,7 @@ interface CatalogContextValue {
   reloadCatalog: () => Promise<void>;
   currentEncounter: CreatureFoundwImage;
   setCurrentEncounter: Function;
+  viskanIsRed: boolean;
   // newCreaturesCount: number;
   // markCatalogAsViewed: () => void;
   // hasNewCreatures: boolean;
@@ -50,6 +51,8 @@ function CatalogProvider({ children }: CatalogProviderProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [currentEncounter, setCurrentEncounter] = useState<any>(null);
+  
+  const viskanIsRed = !!catalog && !!catalog.find(c => c.$id == "68dbd470eeb126340e4c");
   
   // // "New" creatures tracking
   // const [lastViewedCatalogIds, setLastViewedCatalogIds] = useState<Set<string>>(new Set());
@@ -122,6 +125,7 @@ function CatalogProvider({ children }: CatalogProviderProps) {
         reloadCatalog: () => (user ? loadCatalog(user) : Promise.resolve()),
         currentEncounter,
         setCurrentEncounter,
+        viskanIsRed
         // newCreaturesCount,
         // markCatalogAsViewed,
         // hasNewCreatures,

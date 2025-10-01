@@ -46,7 +46,7 @@ export default function Karta() {
   const theme = useTheme() as AppTheme;
   const router = useRouter();
   const mapRef = useRef<MapView>(null);
-  const { clues, catalog } = useCatalog();
+  const { clues, catalog, viskanIsRed } = useCatalog();
   const { isDarkmode } = useContext(MyThemeContext);
   const [filterType, setFilterType] = useState<string>("all");
 
@@ -126,7 +126,7 @@ export default function Karta() {
         showsUserLocation
         showsMyLocationButton
         minZoomLevel={12}
-        customMapStyle={createMapStyle(theme, isDarkmode)}
+        customMapStyle={createMapStyle(theme, isDarkmode, viskanIsRed )}
       >
         {!!getFilteredCreatureMarkers() &&
           getFilteredCreatureMarkers()!.map((m) => (

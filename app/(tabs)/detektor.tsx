@@ -24,13 +24,14 @@ import { useCatalog } from "../../context/catalog-context";
 import { useRouter } from "expo-router";
 import { useCompass } from "../../hooks/use-compass";
 import { Button, useTheme, Text } from "react-native-paper";
+import { AppTheme } from "../../lib/react-native-paper";
 
 export interface CreatureFoundwImage extends CreatureFound {
   img: string;
 }
 
 export default function Detector() {
-  const theme = useTheme();
+  const theme = useTheme() as AppTheme;
   const { reloadCatalog, setCurrentEncounter } = useCatalog();
   const [detectedCreature, setDetectedCreature] =
     useState<null | CreatureDetected>(null);
@@ -157,18 +158,17 @@ export default function Detector() {
 
   return (
     <View
-      style={{
+      style={[theme.styles.container, {
         flex: 1,
         alignItems: "center",
         justifyContent: "center",
         backgroundColor: theme.colors.background,
-      }}
+      }]}
     >
       {/* Compass ring (under everything else) */}
       {!!foundCreature && (
-        <Text>Du har hittat {foundCreature.found_name}!</Text>
+        <Text style={{position:"absolute", top: 80}}>Du har hittat {foundCreature.found_name}!</Text>
       )}
-      <Text style={{ fontSize: 30, marginBottom: 40 }}>Detector</Text>
 
       <View style={styles.circleContainer}>
         {detectedCreature && (
@@ -303,7 +303,7 @@ export default function Detector() {
         <Button
           style={styles.button}
           contentStyle={styles.buttonContent}
-          mode="contained"
+          mode="contained-tonal"
           loading={isDetecting}
           disabled={isDetecting}
           onPress={async () => {
@@ -322,7 +322,9 @@ export default function Detector() {
 
       {!!foundCreature && (
         <Button
-          mode="outlined"
+          style={styles.button}
+          contentStyle={styles.buttonContent}
+          mode="contained"
           onPress={async () => {
             console.log("pressed");
             await startEncounter();
@@ -331,14 +333,10 @@ export default function Detector() {
           Fånga!
         </Button>
       )}
-      {detectedCreature && (
-        <>
-          <Text>
+      {distanceText && detectedCreature && (
+          <Text style={{position:"absolute", top:80}}>
             Detektar något i {bearing2svenska(detectedCreature.bearing_deg)}{" "}
-            riktning
-          </Text>
-          {distanceText && <Text>~ {distanceText} bort.</Text>}
-        </>
+            riktning  ~ {distanceText} bort.</Text>
       )}
     </View>
   );
@@ -350,7 +348,7 @@ const styles = StyleSheet.create({
     height: 200,
     justifyContent: "center",
     alignItems: "center",
-    position: "relative",
+    position: "absolute",
   },
   mainCircle: {
     width: 200,
@@ -435,7 +433,8 @@ const styles = StyleSheet.create({
   },
 
   button: {
-    marginTop: 40,
+    position: "absolute",
+    bottom: 80
   },
   buttonContent: {
     paddingHorizontal: 30,

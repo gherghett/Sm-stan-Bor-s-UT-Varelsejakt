@@ -14,8 +14,18 @@ const rgbToHex = (rgbString: string): string => {
 };
 
 // Function to create map style based on theme colors
-export const createMapStyle = (theme: AppTheme, isDark: boolean) => {
-  if (!isDark) return []; // Use default light style
+export const createMapStyle = (theme: AppTheme, isDark: boolean, viskanIsRed: boolean) => {
+
+  if (!isDark && viskanIsRed) return [{
+      featureType: "water",
+      elementType: "geometry",
+      stylers: [
+        {
+          color: "#9f0c0c" 
+        }
+      ],
+    }]; // Use default light style
+  if(!isDark && !viskanIsRed) return [];
 
   return [
     {
@@ -82,7 +92,7 @@ export const createMapStyle = (theme: AppTheme, isDark: boolean) => {
       elementType: "geometry",
       stylers: [
         {
-          color: rgbToHex(theme.colors.primary),
+          color: viskanIsRed ? "#9f0c0c" : rgbToHex(theme.colors.primary),
         },
       ],
     },
