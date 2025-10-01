@@ -3,7 +3,7 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { useCatalog } from "../../context/catalog-context";
 
 export default function TabsLayout() {
-  const { catalog} = useCatalog();
+  const { catalog, clues} = useCatalog();
 
   return (
     <Tabs
@@ -19,6 +19,7 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="index"
         options={{
+          headerShown:false,
           title: "Home",
           tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons name="home" color={color} size={24} />
@@ -49,6 +50,7 @@ export default function TabsLayout() {
         name="karta"
         options={{
           title: "Karta",
+          tabBarBadge: !!clues &&  clues?.length > 0 ? clues.length : undefined, 
           tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons name="map" color={color} size={24} />
           ),
