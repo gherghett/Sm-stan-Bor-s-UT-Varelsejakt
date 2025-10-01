@@ -61,7 +61,8 @@ export default function Detector() {
       setDetectionDotRotation(0);
       return;
     }
-    const relativeBearing = detectedCreature.bearing_deg - (heading?.trueHeading ?? 0);
+    const relativeBearing =
+      detectedCreature.bearing_deg - (heading?.trueHeading ?? 0);
     setDetectionDotRotation(relativeBearing);
   }, [heading?.trueHeading, detectedCreature]);
 
@@ -132,8 +133,7 @@ export default function Detector() {
       location.coords.latitude.toString(),
       location.coords.longitude.toString(),
       foundCreature.id
-    );
-    reloadCatalog();
+    ).finally(() => reloadCatalog());
 
     setDetectedCreature(null);
 
@@ -146,7 +146,14 @@ export default function Detector() {
   // -------------
 
   return (
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: theme.colors.background }}>
+    <View
+      style={{
+        flex: 1,
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: theme.colors.background,
+      }}
+    >
       {/* Compass ring (under everything else) */}
       {!!foundCreature && (
         <Text>Du har hittat {foundCreature.found_name}!</Text>
@@ -162,12 +169,17 @@ export default function Detector() {
               {
                 transform: [
                   { rotate: `${detectionDotRotation}deg` },
-                  { translateY: -detectedCreature?.distance_m }
+                  { translateY: -detectedCreature?.distance_m },
                 ],
               },
             ]}
           >
-            <View style={[styles.detectionDot, { backgroundColor: theme.colors.secondary }]}></View>
+            <View
+              style={[
+                styles.detectionDot,
+                { backgroundColor: theme.colors.secondary },
+              ]}
+            ></View>
           </Animated.View>
         )}
         <Animated.View
@@ -182,16 +194,72 @@ export default function Detector() {
           ]}
         >
           {/* Cardinal letters */}
-          <Text style={[styles.cardinal, styles.cardinalN, { color: theme.colors.onBackground }]}>N</Text>
-          <Text style={[styles.cardinal, styles.cardinalE, { color: theme.colors.onBackground }]}>E</Text>
-          <Text style={[styles.cardinal, styles.cardinalS, { color: theme.colors.onBackground }]}>S</Text>
-          <Text style={[styles.cardinal, styles.cardinalW, { color: theme.colors.onBackground }]}>W</Text>
+          <Text
+            style={[
+              styles.cardinal,
+              styles.cardinalN,
+              { color: theme.colors.onBackground },
+            ]}
+          >
+            N
+          </Text>
+          <Text
+            style={[
+              styles.cardinal,
+              styles.cardinalE,
+              { color: theme.colors.onBackground },
+            ]}
+          >
+            E
+          </Text>
+          <Text
+            style={[
+              styles.cardinal,
+              styles.cardinalS,
+              { color: theme.colors.onBackground },
+            ]}
+          >
+            S
+          </Text>
+          <Text
+            style={[
+              styles.cardinal,
+              styles.cardinalW,
+              { color: theme.colors.onBackground },
+            ]}
+          >
+            W
+          </Text>
 
           {/* (Optional) small ticks at 0/90/180/270 */}
-          <View style={[styles.tick, styles.tickTop, { backgroundColor: `${theme.colors.outline}99` }]} />
-          <View style={[styles.tick, styles.tickRight, { backgroundColor: `${theme.colors.outline}99` }]} />
-          <View style={[styles.tick, styles.tickBottom, { backgroundColor: `${theme.colors.outline}99` }]} />
-          <View style={[styles.tick, styles.tickLeft, { backgroundColor: `${theme.colors.outline}99` }]} />
+          <View
+            style={[
+              styles.tick,
+              styles.tickTop,
+              { backgroundColor: `${theme.colors.outline}99` },
+            ]}
+          />
+          <View
+            style={[
+              styles.tick,
+              styles.tickRight,
+              { backgroundColor: `${theme.colors.outline}99` },
+            ]}
+          />
+          <View
+            style={[
+              styles.tick,
+              styles.tickBottom,
+              { backgroundColor: `${theme.colors.outline}99` },
+            ]}
+          />
+          <View
+            style={[
+              styles.tick,
+              styles.tickLeft,
+              { backgroundColor: `${theme.colors.outline}99` },
+            ]}
+          />
         </Animated.View>
         {!!foundCreature && (
           <Image
@@ -202,7 +270,9 @@ export default function Detector() {
         )}
 
         {/* Main circle */}
-        <View style={[styles.mainCircle, { borderColor: theme.colors.primary }]}></View>
+        <View
+          style={[styles.mainCircle, { borderColor: theme.colors.primary }]}
+        ></View>
 
         {/* Animated pulse circle */}
         <Animated.View
