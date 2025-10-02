@@ -10,7 +10,7 @@ Utöver samlandet kan man även följa ett noir-inspirerat mysterium som kretsar
 ### Detektorn
 
 Spel-loopen bygger på användning av Detektorn: en skärm i appen där man trycker på en knapp för att se om det finns intressanta punkter i närheten.
-När man är nära nog kan man “fånga” en varelse eller låsa upp en ny del av handlingen. Spelet använder chain-gating: vissa punkter blir tillgängliga först när andra redan har hittats.
+När man är nära nog kan man "fånga" en varelse eller låsa upp en ny del av handlingen. Spelet använder chain-gating: vissa punkter blir tillgängliga först när andra redan har hittats.
 
 ### Kartan
 
@@ -20,6 +20,20 @@ Kartan visar både upptäckta punkter och “clues” (ledtrådar) som driver ha
 
 Här ser spelaren alla varelser och kartpunkter som hittats, såväl som ledtrådar som för spelaren vidare i mysteriet.
 
+![screenshot](docs/horizontal_collage_transparent.png)
+
+### Demo
+Se demo-gif nedan där jag
+- öppnar appen
+- tittar på kartan för att se en clue
+- öppnar mocking appen för att byta position
+- använder detektorn för att se att jag är nära 
+- flyttar närmre  mocking appen
+- "fångar" och ser då min encounter
+- uppdaterar katalogen manuellt fast det borde hänt automatiskt
+- visar hur man kan filtrera kartvyn
+
+![demo](docs/demo.gif)
 ---
 
 ## Teknisk stack
@@ -36,8 +50,6 @@ Här ser spelaren alla varelser och kartpunkter som hittats, såväl som ledtrå
 
 ### Förutsättningar
 - Node.js (version 18 eller senare)
-- npm eller yarn
-- Expo CLI (`npm install -g @expo/cli`)
 
 ### Installation
 
